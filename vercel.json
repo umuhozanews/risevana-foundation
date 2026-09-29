@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/_astro/(.*)", "destination": "/public/_astro/$1" },
+    { "source": "/fonts/(.*)", "destination": "/public/fonts/$1" },
+    { "source": "/images/(.*)", "destination": "/public/images/$1" },
+    { "source": "/videos/(.*)", "destination": "/public/videos/$1" },
+    { "source": "/app.js", "destination": "/public/app.js" },
+    { "source": "/programs", "destination": "/programs.html" },
+    { "source": "/contact", "destination": "/contact.html" },
+    { "source": "/donations", "destination": "/donations.html" }
+  ]
+}

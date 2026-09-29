@@ -1,0 +1,1 @@
+var e=`https://thebinaschool.com`,t=`https://form.thebinaschool.com/new`,n=t,r=t,i=`/images/cta-bg-right.avif`,a=`/images/m-cta-bg-right.avif`;export{r as a,t as i,i as n,e as o,a as r,n as t};

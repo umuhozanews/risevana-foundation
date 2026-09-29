@@ -1,0 +1,1 @@
+var e=`site:preloader-dismissed`,t=!1;function n(){return t||typeof window<`u`&&window.__risevanaDismissed===!0}function r(){t=!0}export{n,r,e as t};

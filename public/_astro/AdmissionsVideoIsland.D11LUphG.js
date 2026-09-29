@@ -1,0 +1,26 @@
+import{o as e,t}from"./react.Od-laFSK.js";import{t as n}from"./AstroRouterBoundary.DKT7Epde.js";import{jt as r,o as i,r as a}from"./shared.BqJ3DuPa.js";import{o,t as s}from"./Image.LdxrQz0g.js";import{o as c}from"./admissions-page.D6c28Re1.js";import{t as l}from"./useScrollEntrance.Dh8oG0HV.js";var u=e(t(),1),d=r(),f=`/images/admissions/video/video-thumbnail-family.png`,p=`/images/admissions/video/video-thumbnail-family.avif`;function m(){let e=o(),t=(0,u.useRef)(null),n=(0,u.useRef)(null),r=(0,u.useRef)(null),m=(0,u.useRef)(null),h=(0,u.useRef)(null),[g,_]=(0,u.useState)(!1);l(t,{translateY:[40,0],opacity:[0,1],duration:900}),l(n,{translateY:[60,0],opacity:[0,1],duration:a,delay:200}),l(m,{translateX:[-80,0],opacity:[0,1],duration:a}),l(h,{translateX:[80,0],opacity:[0,1],duration:a,delay:200});function v(){let e=r.current;e&&(e.paused?(e.play(),_(!0)):(e.pause(),_(!1)))}return(0,d.jsxs)(`section`,{id:`admissions-video`,className:`relative w-full overflow-x-clip`,style:{backgroundColor:`#1B1B1B`},children:[(0,d.jsx)(`div`,{ref:m,className:`pointer-events-none absolute z-[4]
+          top-0 -left-[5%]
+          w-[35%] -translate-y-[40%]
+          md:translate-y-0 md:z-[1] md:top-[18%] md:-left-[5%] md:w-[28%] md:max-w-[clamp(12.25rem,16.2vw,26.25rem)]
+          xl:w-[25%] xl:max-w-[clamp(17.5rem,23.15vw,37.5rem)]`,children:(0,d.jsx)(s,{src:`/images/admissions/decorations/video-palm-leaf-left.png`,alt:``,"aria-hidden":`true`,className:`palm-sway-left w-full h-auto`,style:{objectFit:`contain`}})}),(0,d.jsx)(s,{src:`/images/admissions/decorations/video-frog-green-full.png`,alt:``,"aria-hidden":`true`,className:`pointer-events-none absolute z-[3]
+          bottom-0 right-0
+          md:bottom-auto md:top-[22%] xl:top-[2%]
+          w-[40%] max-w-[clamp(7.44rem,9.84vw,15.94rem)]
+          md:w-[23%] md:max-w-[clamp(10.28rem,13.6vw,22.03rem)]
+          xl:w-[24%] xl:max-w-[clamp(15.93rem,21.06vw,34.13rem)]
+          object-contain`}),(0,d.jsx)(`div`,{ref:h,className:`pointer-events-none absolute z-[4]
+          top-0 -right-[5%]
+          w-[35%] -translate-y-[40%]
+          md:translate-y-0 md:z-[1] md:top-auto md:-right-[5%] md:bottom-[8%]
+          md:w-[30%] md:max-w-[clamp(14rem,18.52vw,30rem)]
+          xl:w-[30%] xl:max-w-[clamp(21rem,27.78vw,45rem)]`,children:(0,d.jsx)(s,{src:`/images/admissions/decorations/video-palm-leaf-right.png`,alt:``,"aria-hidden":`true`,className:`palm-sway-right w-full h-auto`,style:{objectFit:`contain`}})}),(0,d.jsxs)(`div`,{className:`pointer-events-none absolute z-[3]
+          bottom-0 left-0
+          md:bottom-[8%]
+          w-[35%] max-w-[clamp(6.13rem,8.1vw,13.13rem)]
+          md:w-[19%] md:max-w-[clamp(8.45rem,11.17vw,18.09rem)]
+          xl:w-[15%] xl:max-w-[clamp(9.8rem,12.96vw,21rem)]`,children:[(0,d.jsx)(s,{src:`/images/admissions/icons/video-frog-decoration-blob-flipped.svg`,alt:``,"aria-hidden":`true`,className:`absolute inset-0 w-full h-full object-contain z-[0]`,style:{transform:`rotate(180deg) scaleY(-1)`}}),(0,d.jsx)(s,{src:`/images/admissions/decorations/video-frog-green.png`,alt:``,"aria-hidden":`true`,className:`relative z-[1] w-full h-auto object-contain`})]}),(0,d.jsxs)(`div`,{className:`relative z-[5] flex flex-col items-center px-5 pt-12 pb-40 md:px-12 md:py-12 xl:px-32 xl:py-24 gap-14`,children:[(0,d.jsxs)(`div`,{ref:t,className:`flex flex-col items-center gap-6 text-center max-w-[clamp(15.31rem,20.25vw,32.81rem)] md:max-w-[clamp(36.27rem,47.98vw,77.72rem)] xl:max-w-[clamp(35rem,46.3vw,75rem)]`,style:{fontFamily:`Rund Display, sans-serif`},children:[(0,d.jsxs)(`h2`,{className:`xl:px-12`,style:{fontWeight:700,color:i.pink,lineHeight:1},children:[(0,d.jsx)(`span`,{className:`hidden xl:inline`,style:{fontSize:`clamp(2.45rem, 3.24vw, 5.25rem)`},children:c.headline}),(0,d.jsx)(`span`,{className:`xl:hidden`,style:{fontSize:`clamp(1.66rem, 2.2vw, 3.56rem)`,lineHeight:1},children:c.headline})]}),(0,d.jsx)(`p`,{style:{fontWeight:400,color:i.pink,fontSize:`clamp(1.05rem, 1.39vw, 2.25rem)`},children:c.subheadline})]}),(0,d.jsxs)(`div`,{ref:n,className:`relative rounded-[1.875rem] overflow-hidden cursor-pointer
+            w-[clamp(13.13rem,17.36vw,28.13rem)] h-[clamp(23.32rem,30.85vw,49.97rem)]
+            xl:w-[clamp(17.63rem,23.32vw,37.78rem)] xl:h-[clamp(31.41rem,41.55vw,67.31rem)]`,onClick:v,children:[!g&&(0,d.jsx)(s,{src:f,alt:`Video thumbnail — Joshua testimonial`,className:`absolute inset-0 w-full h-full object-cover z-[1]`}),(0,d.jsx)(`video`,{ref:r,src:e?void 0:`/images/admissions/video/joshua-testimonial.mp4`,poster:e?void 0:p,"data-warmup-poster":e?p:void 0,playsInline:!0,preload:e?`none`:`metadata`,className:`w-full h-full object-cover`,onEnded:()=>_(!1)}),(0,d.jsx)(`button`,{type:`button`,"aria-label":g?`Pause video`:`Play video`,className:`absolute z-10 transition-opacity duration-300
+              bottom-4 right-5
+              w-[clamp(2.19rem,2.89vw,4.69rem)] h-[clamp(2.19rem,2.89vw,4.69rem)]
+              xl:w-[clamp(3.06rem,4.05vw,6.56rem)] xl:h-[clamp(3.06rem,4.05vw,6.56rem)]`,style:{opacity:+!g},onClick:e=>{e.stopPropagation(),v()},children:(0,d.jsx)(s,{src:`/images/admissions/icons/video-play-button.svg`,alt:``,className:`w-full h-full`})})]})]})]})}function h(){return(0,d.jsx)(n,{location:`/admissions`,children:(0,d.jsx)(m,{})})}export{h as default};

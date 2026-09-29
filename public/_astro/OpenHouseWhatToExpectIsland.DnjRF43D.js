@@ -1,0 +1,24 @@
+import{t as e}from"./AstroRouterBoundary.DKT7Epde.js";import{jt as t}from"./shared.BqJ3DuPa.js";import{t as n}from"./CTAButton.HgkUzVdE.js";import{t as r}from"./Image.LdxrQz0g.js";import{a as i,f as a,i as o}from"./open-house.DFRaFcs-.js";import{t as s}from"./useMediaQuery.Dw1_-KWn.js";var c=t();function l(){let e=s(`(max-width: 767px)`);return(0,c.jsxs)(`section`,{className:`relative flex flex-col items-center gap-14 bg-[#1B1B1B] px-5 py-[clamp(2rem,3.13vw,3.75rem)] md:gap-14 md:px-6 md:py-14 xl:gap-24 xl:px-6 xl:py-24`,"aria-labelledby":`what-to-expect-title`,children:[(0,c.jsx)(`style`,{children:`
+        /* Sizes/offsets in vw + rem so the decor scales with the viewport instead
+           of breaking at non-1440 widths. Design baseline is 1440 → 1px ≈ 0.0694vw.
+           Heights mirror each PNG's natural aspect ratio so the images aren't
+           stretched (object-fit:contain is the belt to that braces). */
+        .oh-wte-axolotl-salamander,
+        .oh-wte-axolotl-albino,
+        .oh-wte-axolotl-plant,
+        .oh-wte-lake-1,
+        .oh-wte-heron { object-fit: contain; }
+        /* PNGs are square (transparent padding around the visible content), so
+           contain centers the image inside the box and leaves a gap to the
+           viewport edge. Pin each one to its respective edge instead. */
+        .oh-wte-lake-1 { object-position: left center; }
+        .oh-wte-heron  { object-position: right center; }
+
+        @media (min-width: 1280px) {
+          .oh-wte-axolotl-salamander{ position: absolute; top: -1rem;    right: -7vw;  width: 17vw;    height: 19.42vw; transform: scaleY(-1) rotate(180deg); pointer-events: none; z-index: 3; }
+          .oh-wte-axolotl-albino    { position: absolute; top:  1rem;    right: -12vw; width: 28vw;    height: 25.79vw; transform: scaleY(-1) rotate(180deg); pointer-events: none; z-index: 4; }
+          .oh-wte-axolotl-plant     { position: absolute; top:  0rem;    right: -2vw;  width: 17vw;    height: 19.58vw; transform: rotate(-6.79deg); pointer-events: none; z-index: 2; }
+          .oh-wte-lake-1            { position: absolute; bottom: -30rem; left:  -26vw;  width: 80vw;    height: 54.40vw; pointer-events: none; z-index: 2; }
+          .oh-wte-heron             { position: absolute; bottom: -38rem; right: -18vw;  width: 75vw;    height: 58.80vw; pointer-events: none; z-index: 2; }
+        }
+      `}),(0,c.jsx)(r,{src:`/images/open-house/deco-axolotl-plant.png`,alt:``,"aria-hidden":`true`,className:`oh-wte-axolotl-plant hidden xl:block`}),(0,c.jsx)(r,{src:`/images/open-house/deco-axolotl.png`,alt:``,"aria-hidden":`true`,className:`oh-wte-axolotl-albino hidden xl:block`}),(0,c.jsx)(r,{src:`/images/open-house/deco-salamander.png`,alt:``,"aria-hidden":`true`,className:`oh-wte-axolotl-salamander hidden xl:block`}),(0,c.jsx)(r,{src:`/images/open-house/deco-lake-01-lilies.png`,alt:``,"aria-hidden":`true`,className:`oh-wte-lake-1 hidden xl:block`}),(0,c.jsx)(r,{src:`/images/open-house/deco-heron-flying.png`,alt:``,"aria-hidden":`true`,className:`oh-wte-heron hidden xl:block`}),(0,c.jsx)(`h2`,{id:`what-to-expect-title`,className:`w-full max-w-[50rem] text-center text-[clamp(1.4rem,1.85vw,3rem)] md:text-[clamp(2.45rem,3.24vw,5.25rem)] xl:text-[clamp(2.45rem,3.24vw,5.25rem)]`,style:{fontFamily:`Rund Display, sans-serif`,fontWeight:700,color:i.tealCyan,lineHeight:1},children:a.title}),(0,c.jsx)(`div`,{className:`flex w-full flex-wrap items-start justify-center gap-6 xl:grid xl:grid-cols-3 xl:gap-6`,children:a.steps.map(e=>(0,c.jsx)(`article`,{className:`flex w-full flex-col items-start gap-3 p-6 md:w-[308px] xl:w-auto`,style:{backgroundColor:i.tealCyan,borderRadius:`1.875rem`},children:(0,c.jsxs)(`div`,{className:`flex w-full flex-col items-center gap-3`,children:[(0,c.jsx)(`span`,{className:`w-full text-left`,style:{fontFamily:`Rund Display, sans-serif`,fontWeight:900,fontSize:`clamp(2.8rem, 3.7vw, 6rem)`,color:`#000000`,lineHeight:1},children:e.number}),(0,c.jsx)(`h3`,{className:`w-full text-left text-[clamp(1.4rem,1.85vw,3rem)] md:text-[clamp(1.75rem,2.31vw,3.75rem)] xl:text-[clamp(1.75rem,2.31vw,3.75rem)]`,style:{fontFamily:`Rund Display, sans-serif`,fontWeight:700,color:`#000000`,lineHeight:1},children:e.title}),(0,c.jsx)(`p`,{className:`w-full text-left`,style:{fontFamily:`Rund Display, sans-serif`,fontWeight:400,fontSize:`clamp(1rem, 1.5vw, 1.25rem)`,color:`#000000`,lineHeight:1.15},children:e.descriptionMobile?(0,c.jsxs)(c.Fragment,{children:[(0,c.jsx)(`span`,{className:`md:hidden`,children:e.descriptionMobile}),(0,c.jsx)(`span`,{className:`hidden md:inline`,children:e.description})]}):e.description})]})},e.number))}),(0,c.jsx)(n,{text:o.text,href:o.href,size:e?`medium`:`large`,className:`border-2 border-black`})]})}function u(){return(0,c.jsx)(e,{location:`/open-house`,children:(0,c.jsx)(l,{})})}export{u as default};

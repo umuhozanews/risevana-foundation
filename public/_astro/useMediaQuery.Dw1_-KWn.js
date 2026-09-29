@@ -1,0 +1,1 @@
+import{o as e,t}from"./react.Od-laFSK.js";var n=e(t(),1);function r(e){let[t,r]=(0,n.useState)(!1);return(0,n.useEffect)(()=>{let t=window.matchMedia(e);r(t.matches);let n=e=>r(e.matches);return t.addEventListener(`change`,n),()=>t.removeEventListener(`change`,n)},[e]),t}export{r as t};
