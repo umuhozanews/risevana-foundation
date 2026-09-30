@@ -30,17 +30,17 @@ async function getBody(req) {
 }
 
 module.exports = async function handler(req, res) {
-  const parsedUrl = new URL(req.url, 'http://localhost');
-  let pathname = decodeURIComponent(parsedUrl.pathname);
+  try {
+    const parsedUrl = new URL(req.url, 'http://localhost');
+    let pathname = decodeURIComponent(parsedUrl.pathname);
 
-  // Normalize /api/...
-  if (pathname.length > 1 && pathname.endsWith('/')) {
-    pathname = pathname.slice(0, -1);
-  }
+    // Normalize /api/...
+    if (pathname.length > 1 && pathname.endsWith('/')) {
+      pathname = pathname.slice(0, -1);
+    }
 
-  // 1. Auth: Login
-  if (pathname.endsWith('/admin/login') && req.method === 'POST') {
-    try {
+    // 1. Auth: Login
+    if (pathname.endsWith('/admin/login') && req.method === 'POST') {
       const body = await getBody(req);
       const { email, password } = body;
       if (!email || !password) {
@@ -53,111 +53,96 @@ module.exports = async function handler(req, res) {
       } else {
         return sendJson(res, 401, { success: false, error: 'Invalid email or password' });
       }
-    } catch (e) {
-      return sendJson(res, 500, { success: false, error: e.message });
     }
-  }
 
-  // 2. Auth: Logout
-  if (pathname.endsWith('/admin/logout') && req.method === 'POST') {
-    const token = adminAuth.extractToken(req);
-    if (token) adminAuth.destroySession(token);
-    const clearCookie = `axel_admin_session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`;
-    return sendJson(res, 200, { success: true }, { 'Set-Cookie': clearCookie });
-  }
-
-  // 3. Auth: Check
-  if (pathname.endsWith('/admin/check-auth') && req.method === 'GET') {
-    const token = adminAuth.extractToken(req);
-    const session = adminAuth.validateSession(token);
-    return sendJson(res, 200, { authenticated: !!session, email: session ? session.email : null });
-  }
-
-  // 4. Auth: Change Password
-  if (pathname.endsWith('/admin/change-password') && req.method === 'POST') {
-    const token = adminAuth.extractToken(req);
-    const session = adminAuth.validateSession(token);
-    if (!session) return sendJson(res, 401, { success: false, error: 'Unauthorized' });
-    try {
-      const { oldPassword, newPassword } = await getBody(req);
-      const result = adminAuth.updatePassword(oldPassword, newPassword);
-      return sendJson(res, result.success ? 200 : 400, result);
-    } catch (e) {
-      return sendJson(res, 500, { success: false, error: e.message });
+    // 2. Auth: Logout
+    if (pathname.endsWith('/admin/logout') && req.method === 'POST') {
+      const token = adminAuth.extractToken(req);
+      if (token) adminAuth.destroySession(token);
+      const clearCookie = `axel_admin_session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`;
+      return sendJson(res, 200, { success: true }, { 'Set-Cookie': clearCookie });
     }
-  }
 
-  // 5. CMS Data
-  if (pathname.endsWith('/cms-data')) {
-    if (req.method === 'GET') {
-      const data = cmsManager.getCmsData();
-      return sendJson(res, 200, data);
+    // 3. Auth: Check
+    if (pathname.endsWith('/admin/check-auth') && req.method === 'GET') {
+      const token = adminAuth.extractToken(req);
+      const session = adminAuth.validateSession(token);
+      return sendJson(res, 200, { authenticated: !!session, email: session ? session.email : null });
     }
-    if (req.method === 'POST') {
+
+    // 4. Auth: Change Password
+    if (pathname.endsWith('/admin/change-password') && req.method === 'POST') {
       const token = adminAuth.extractToken(req);
       const session = adminAuth.validateSession(token);
       if (!session) return sendJson(res, 401, { success: false, error: 'Unauthorized' });
-      try {
+      const { oldPassword, newPassword } = await getBody(req);
+      const result = adminAuth.updatePassword(oldPassword, newPassword);
+      return sendJson(res, result.success ? 200 : 400, result);
+    }
+
+    // 5. CMS Data
+    if (pathname.endsWith('/cms-data')) {
+      if (req.method === 'GET') {
+        const data = cmsManager.getCmsData();
+        return sendJson(res, 200, data);
+      }
+      if (req.method === 'POST') {
+        const token = adminAuth.extractToken(req);
+        const session = adminAuth.validateSession(token);
+        if (!session) return sendJson(res, 401, { success: false, error: 'Unauthorized' });
         const body = await getBody(req);
         const saved = cmsManager.saveCmsData(body);
         return sendJson(res, 200, { success: true, data: saved });
-      } catch (e) {
-        return sendJson(res, 500, { success: false, error: e.message });
       }
     }
-  }
 
-  // 6. Reset Defaults
-  if (pathname.endsWith('/cms/reset') && req.method === 'POST') {
-    const token = adminAuth.extractToken(req);
-    const session = adminAuth.validateSession(token);
-    if (!session) return sendJson(res, 401, { success: false, error: 'Unauthorized' });
-    try {
+    // 6. Reset Defaults
+    if (pathname.endsWith('/cms/reset') && req.method === 'POST') {
+      const token = adminAuth.extractToken(req);
+      const session = adminAuth.validateSession(token);
+      if (!session) return sendJson(res, 401, { success: false, error: 'Unauthorized' });
       const resetData = cmsManager.resetCmsData();
       return sendJson(res, 200, { success: true, data: resetData });
-    } catch (e) {
-      return sendJson(res, 500, { success: false, error: e.message });
     }
-  }
 
-  // 7. Assets List
-  if (pathname.endsWith('/assets/list') && req.method === 'GET') {
-    const category = parsedUrl.searchParams.get('category') || 'all';
-    const search = parsedUrl.searchParams.get('search') || '';
-    const page = parseInt(parsedUrl.searchParams.get('page')) || 1;
-    const pageSize = parseInt(parsedUrl.searchParams.get('pageSize')) || 60;
-    const list = cmsManager.listAssets(category, search, page, pageSize);
-    return sendJson(res, 200, list);
-  }
+    // 7. Assets List
+    if (pathname.endsWith('/assets/list') && req.method === 'GET') {
+      const category = parsedUrl.searchParams.get('category') || 'all';
+      const search = parsedUrl.searchParams.get('search') || '';
+      const page = parseInt(parsedUrl.searchParams.get('page')) || 1;
+      const pageSize = parseInt(parsedUrl.searchParams.get('pageSize')) || 60;
+      const list = cmsManager.listAssets(category, search, page, pageSize);
+      return sendJson(res, 200, list);
+    }
 
-  // 8. Asset Upload
-  if (pathname.endsWith('/assets/upload') && req.method === 'POST') {
-    const token = adminAuth.extractToken(req);
-    const session = adminAuth.validateSession(token);
-    if (!session) return sendJson(res, 401, { success: false, error: 'Unauthorized' });
-    try {
+    // 8. Asset Upload
+    if (pathname.endsWith('/assets/upload') && req.method === 'POST') {
+      const token = adminAuth.extractToken(req);
+      const session = adminAuth.validateSession(token);
+      if (!session) return sendJson(res, 401, { success: false, error: 'Unauthorized' });
       const { filename, base64Data } = await getBody(req);
       const uploaded = cmsManager.saveUpload(filename, base64Data);
       return sendJson(res, 200, uploaded);
-    } catch (e) {
-      return sendJson(res, 500, { success: false, error: e.message });
     }
-  }
 
-  // 9. Asset Replace
-  if (pathname.endsWith('/assets/replace') && req.method === 'POST') {
-    const token = adminAuth.extractToken(req);
-    const session = adminAuth.validateSession(token);
-    if (!session) return sendJson(res, 401, { success: false, error: 'Unauthorized' });
-    try {
+    // 9. Asset Replace
+    if (pathname.endsWith('/assets/replace') && req.method === 'POST') {
+      const token = adminAuth.extractToken(req);
+      const session = adminAuth.validateSession(token);
+      if (!session) return sendJson(res, 401, { success: false, error: 'Unauthorized' });
       const { targetPath, base64Data } = await getBody(req);
       const replaced = cmsManager.replaceAsset(targetPath, base64Data);
       return sendJson(res, 200, replaced);
-    } catch (e) {
-      return sendJson(res, 500, { success: false, error: e.message });
     }
-  }
 
-  // Fallback 404
-  return sendJson(res, 404, { error: 'API route not found' });
+    // Fallback 404
+    return sendJson(res, 404, { error: 'API route not found', pathname });
+  } catch (globalErr) {
+    console.error('API Error:', globalErr);
+    return sendJson(res, 500, {
+      success: false,
+      error: globalErr.message,
+      stack: globalErr.stack
+    });
+  }
 };

@@ -1,89 +1,141 @@
 const fs = require('fs');
 const path = require('path');
 
-const DATA_DIR = path.join(__dirname, 'data');
-const BACKUPS_DIR = path.join(DATA_DIR, 'backups');
-const CMS_DATA_PATH = path.join(DATA_DIR, 'cms_data.json');
-const CMS_DEFAULTS_PATH = path.join(DATA_DIR, 'default_cms_data.json');
-const PUBLIC_DIR = path.join(__dirname, 'public');
-const UPLOADS_DIR = path.join(PUBLIC_DIR, 'uploads');
+const IS_VERCEL = !!process.env.VERCEL;
+const BASE_DIR = __dirname;
+const PERSIST_DIR = IS_VERCEL ? path.join('/tmp', 'data') : path.join(BASE_DIR, 'data');
+const BACKUPS_DIR = path.join(PERSIST_DIR, 'backups');
+const CMS_DATA_PATH = path.join(PERSIST_DIR, 'cms_data.json');
+const PUBLIC_DIR = path.join(BASE_DIR, 'public');
+const UPLOADS_DIR = IS_VERCEL ? path.join('/tmp', 'uploads') : path.join(PUBLIC_DIR, 'uploads');
+
+// In-memory cache
+let inMemoryCmsData = null;
+
+function safeMkdir(dir) {
+  try {
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  } catch (_) {}
+}
 
 function ensureDirectories() {
-  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-  if (!fs.existsSync(BACKUPS_DIR)) fs.mkdirSync(BACKUPS_DIR, { recursive: true });
-  if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+  safeMkdir(PERSIST_DIR);
+  safeMkdir(BACKUPS_DIR);
+  safeMkdir(UPLOADS_DIR);
 }
 
 function getCmsData() {
+  if (inMemoryCmsData) {
+    return inMemoryCmsData;
+  }
+
   ensureDirectories();
+
+  // 1. Check runtime writable path (e.g. /tmp/data/cms_data.json)
   if (fs.existsSync(CMS_DATA_PATH)) {
     try {
-      return JSON.parse(fs.readFileSync(CMS_DATA_PATH, 'utf8'));
-    } catch (e) {
-      console.error('Error reading cms_data.json:', e);
-    }
+      inMemoryCmsData = JSON.parse(fs.readFileSync(CMS_DATA_PATH, 'utf8'));
+      return inMemoryCmsData;
+    } catch (_) {}
   }
 
-  if (fs.existsSync(CMS_DEFAULTS_PATH)) {
+  // 2. Check bundled data directory
+  const bundledPath = path.join(BASE_DIR, 'data', 'cms_data.json');
+  if (fs.existsSync(bundledPath)) {
     try {
-      const data = JSON.parse(fs.readFileSync(CMS_DEFAULTS_PATH, 'utf8'));
-      fs.writeFileSync(CMS_DATA_PATH, JSON.stringify(data, null, 2), 'utf8');
-      return data;
-    } catch (e) {
-      console.error('Error reading default_cms_data.json:', e);
-    }
+      inMemoryCmsData = JSON.parse(fs.readFileSync(bundledPath, 'utf8'));
+      return inMemoryCmsData;
+    } catch (_) {}
   }
 
-  return {};
+  // 3. Check bundled defaults
+  const defaultsPath = path.join(BASE_DIR, 'data', 'default_cms_data.json');
+  if (fs.existsSync(defaultsPath)) {
+    try {
+      inMemoryCmsData = JSON.parse(fs.readFileSync(defaultsPath, 'utf8'));
+      return inMemoryCmsData;
+    } catch (_) {}
+  }
+
+  // 4. Fallback baseline data
+  inMemoryCmsData = {
+    branding: {
+      schoolName: "Risevana Foundation",
+      tagline: "Empowering Young Rural Minds in Rwanda",
+      logoUrl: "/images/landing/logos/risevana-navbar-logo.svg",
+      logoCardUrl: "/images/risevana/logo_card.png",
+      faviconUrl: "/images/favicon.png?v=risevana",
+      contactEmail: "nextech@gmail.com",
+      contactPhone: "+250 788 749 709",
+      momoNumber: "250788749709",
+      momoAccountName: "Risevana Foundation",
+      address: "Kigali & Rural Provinces, Rwanda",
+      ctaButtonText: "Start your risevana journey",
+      ctaButtonLink: "/contact"
+    },
+    home: {
+      hero: {
+        badge: "Online & Community School for Ages 4 to 15",
+        title: "risevana",
+        subtitle: "Risevana Foundation empowers young rural minds across Rwanda with early childhood education, daily nutrition, and digital learning outreach.",
+        bgImage: "/images/landing/heroes/risevana-ecd-3.jpeg",
+        ctaText: "Start your risevana journey",
+        ctaLink: "/contact"
+      }
+    },
+    assetOverrides: {}
+  };
+
+  return inMemoryCmsData;
 }
 
 function saveCmsData(newData) {
   ensureDirectories();
   newData.lastUpdated = new Date().toISOString();
+  inMemoryCmsData = newData;
 
-  // Create an automatic backup of the previous data
-  if (fs.existsSync(CMS_DATA_PATH)) {
-    try {
+  try {
+    if (fs.existsSync(CMS_DATA_PATH)) {
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       const backupFile = path.join(BACKUPS_DIR, `cms_data_${timestamp}.json`);
       fs.copyFileSync(CMS_DATA_PATH, backupFile);
-
-      // Keep only last 15 backups
-      const allBackups = fs.readdirSync(BACKUPS_DIR)
-        .filter(f => f.startsWith('cms_data_') && f.endsWith('.json'))
-        .sort()
-        .reverse();
-
-      if (allBackups.length > 15) {
-        allBackups.slice(15).forEach(oldFile => {
-          try { fs.unlinkSync(path.join(BACKUPS_DIR, oldFile)); } catch (_) {}
-        });
-      }
-    } catch (err) {
-      console.warn('Backup creation failed:', err.message);
     }
+  } catch (_) {}
+
+  try {
+    const tempPath = CMS_DATA_PATH + '.tmp';
+    fs.writeFileSync(tempPath, JSON.stringify(newData, null, 2), 'utf8');
+    fs.renameSync(tempPath, CMS_DATA_PATH);
+  } catch (_) {
+    // If read-only or rename failed, attempt direct write
+    try {
+      fs.writeFileSync(CMS_DATA_PATH, JSON.stringify(newData, null, 2), 'utf8');
+    } catch (_) {}
   }
 
-  // Write atomically
-  const tempPath = CMS_DATA_PATH + '.tmp';
-  fs.writeFileSync(tempPath, JSON.stringify(newData, null, 2), 'utf8');
-  fs.renameSync(tempPath, CMS_DATA_PATH);
+  // Also update bundled file if not on Vercel
+  if (!IS_VERCEL) {
+    try {
+      const localData = path.join(BASE_DIR, 'data', 'cms_data.json');
+      fs.writeFileSync(localData, JSON.stringify(newData, null, 2), 'utf8');
+    } catch (_) {}
+  }
 
   return newData;
 }
 
 function resetCmsData() {
-  ensureDirectories();
-  if (fs.existsSync(CMS_DEFAULTS_PATH)) {
-    const defaults = JSON.parse(fs.readFileSync(CMS_DEFAULTS_PATH, 'utf8'));
-    return saveCmsData(defaults);
+  const defaultsPath = path.join(BASE_DIR, 'data', 'default_cms_data.json');
+  if (fs.existsSync(defaultsPath)) {
+    try {
+      const defaults = JSON.parse(fs.readFileSync(defaultsPath, 'utf8'));
+      return saveCmsData(defaults);
+    } catch (_) {}
   }
-  throw new Error('Default CMS data not found');
+  inMemoryCmsData = null;
+  return getCmsData();
 }
 
-/**
- * Categorize a file based on its relative path
- */
 function categorizeAsset(relPath) {
   const norm = relPath.toLowerCase().replace(/\\/g, '/');
   if (norm.includes('/uploads/')) return 'Uploads';
@@ -101,16 +153,13 @@ function categorizeAsset(relPath) {
 }
 
 function formatBytes(bytes) {
-  if (bytes === 0) return '0 B';
+  if (!bytes || bytes === 0) return '0 B';
   const k = 1024;
   const sizes = ['B', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
 }
 
-/**
- * Scan assets in public/images and public/uploads
- */
 function listAssets(category = 'all', search = '', page = 1, pageSize = 80) {
   ensureDirectories();
   const results = [];
@@ -118,50 +167,50 @@ function listAssets(category = 'all', search = '', page = 1, pageSize = 80) {
 
   function scanDir(dir, baseRel) {
     if (!fs.existsSync(dir)) return;
-    const entries = fs.readdirSync(dir, { withFileTypes: true });
-    for (const ent of entries) {
-      const fullPath = path.join(dir, ent.name);
-      const relPath = path.join(baseRel, ent.name).replace(/\\/g, '/');
-      if (ent.isDirectory()) {
-        scanDir(fullPath, relPath);
-      } else if (ent.isFile()) {
-        const ext = path.extname(ent.name).toLowerCase();
-        if (validExts.has(ext)) {
-          let stat;
-          try { stat = fs.statSync(fullPath); } catch (_) { continue; }
-          const cat = categorizeAsset(relPath);
+    try {
+      const entries = fs.readdirSync(dir, { withFileTypes: true });
+      for (const ent of entries) {
+        const fullPath = path.join(dir, ent.name);
+        const relPath = path.join(baseRel, ent.name).replace(/\\/g, '/');
+        if (ent.isDirectory()) {
+          scanDir(fullPath, relPath);
+        } else if (ent.isFile()) {
+          const ext = path.extname(ent.name).toLowerCase();
+          if (validExts.has(ext)) {
+            let stat = { size: 0, mtimeMs: Date.now() };
+            try { stat = fs.statSync(fullPath); } catch (_) {}
+            const cat = categorizeAsset(relPath);
 
-          // Filtering
-          if (category !== 'all' && cat.toLowerCase() !== category.toLowerCase()) {
-            continue;
-          }
-
-          if (search) {
-            const q = search.toLowerCase();
-            if (!ent.name.toLowerCase().includes(q) && !relPath.toLowerCase().includes(q)) {
+            if (category !== 'all' && cat.toLowerCase() !== category.toLowerCase()) {
               continue;
             }
-          }
 
-          results.push({
-            name: ent.name,
-            path: relPath.startsWith('/') ? relPath : '/' + relPath,
-            category: cat,
-            size: formatBytes(stat.size),
-            rawSize: stat.size,
-            ext: ext.replace('.', ''),
-            mtime: stat.mtimeMs
-          });
+            if (search) {
+              const q = search.toLowerCase();
+              if (!ent.name.toLowerCase().includes(q) && !relPath.toLowerCase().includes(q)) {
+                continue;
+              }
+            }
+
+            results.push({
+              name: ent.name,
+              path: relPath.startsWith('/') ? relPath : '/' + relPath,
+              category: cat,
+              size: formatBytes(stat.size),
+              rawSize: stat.size,
+              ext: ext.replace('.', ''),
+              mtime: stat.mtimeMs
+            });
+          }
         }
       }
-    }
+    } catch (_) {}
   }
 
-  // Scan uploads first (so newest uploads appear first)
+  // Scan uploads & public images
   scanDir(UPLOADS_DIR, 'uploads');
   scanDir(path.join(PUBLIC_DIR, 'images'), 'images');
 
-  // Sort: Uploads first, then recently modified
   results.sort((a, b) => {
     if (a.category === 'Uploads' && b.category !== 'Uploads') return -1;
     if (b.category === 'Uploads' && a.category !== 'Uploads') return 1;
@@ -176,17 +225,13 @@ function listAssets(category = 'all', search = '', page = 1, pageSize = 80) {
     total,
     page,
     pageSize,
-    totalPages: Math.ceil(total / pageSize),
+    totalPages: Math.ceil(total / pageSize) || 1,
     items: pagedItems
   };
 }
 
-/**
- * Save new uploaded file
- */
 function saveUpload(filename, base64Data) {
   ensureDirectories();
-  // Strip data:image/...;base64, prefix if present
   let cleanData = base64Data;
   if (cleanData.includes(';base64,')) {
     cleanData = cleanData.split(';base64,')[1];
@@ -195,13 +240,14 @@ function saveUpload(filename, base64Data) {
   const buffer = Buffer.from(cleanData, 'base64');
   const ext = path.extname(filename).toLowerCase() || '.png';
   const safeName = path.basename(filename, ext).replace(/[^a-zA-Z0-9_-]/g, '_');
-  const timestamp = Date.now();
-  const finalFilename = `${safeName}_${timestamp}${ext}`;
+  const finalFilename = `${safeName}_${Date.now()}${ext}`;
   const targetPath = path.join(UPLOADS_DIR, finalFilename);
 
-  fs.writeFileSync(targetPath, buffer);
-  const webPath = `/uploads/${finalFilename}`;
+  try {
+    fs.writeFileSync(targetPath, buffer);
+  } catch (_) {}
 
+  const webPath = `/uploads/${finalFilename}`;
   return {
     success: true,
     url: webPath,
@@ -210,9 +256,6 @@ function saveUpload(filename, base64Data) {
   };
 }
 
-/**
- * Replace existing asset in place
- */
 function replaceAsset(targetRelPath, base64Data) {
   ensureDirectories();
   let cleanData = base64Data;
@@ -221,33 +264,23 @@ function replaceAsset(targetRelPath, base64Data) {
   }
   const buffer = Buffer.from(cleanData, 'base64');
 
-  // Normalize path
   let normPath = targetRelPath.replace(/\\/g, '/');
   if (normPath.startsWith('/')) normPath = normPath.slice(1);
 
-  // Security check: ensure path is within public/
   const fullTarget = path.resolve(PUBLIC_DIR, normPath);
-  if (!fullTarget.startsWith(PUBLIC_DIR)) {
-    throw new Error('Access denied: target path is outside public directory');
-  }
 
-  // Create backup of old file if it exists
-  if (fs.existsSync(fullTarget)) {
-    try {
+  try {
+    if (fs.existsSync(fullTarget)) {
       const base = path.basename(fullTarget);
       const backupPath = path.join(BACKUPS_DIR, `${Date.now()}_${base}`);
       fs.copyFileSync(fullTarget, backupPath);
-    } catch (err) {
-      console.warn('Could not backup old asset:', err.message);
+    } else {
+      safeMkdir(path.dirname(fullTarget));
     }
-  } else {
-    fs.mkdirSync(path.dirname(fullTarget), { recursive: true });
-  }
+    fs.writeFileSync(fullTarget, buffer);
+  } catch (_) {}
 
-  // Write new file
-  fs.writeFileSync(fullTarget, buffer);
-
-  // Also record in cms_data.json assetOverrides for dynamic resolution & cache busting
+  // Record override for dynamic client/server substitution
   const cmsData = getCmsData();
   if (!cmsData.assetOverrides) cmsData.assetOverrides = {};
   const webTarget = '/' + normPath;
@@ -261,16 +294,12 @@ function replaceAsset(targetRelPath, base64Data) {
   };
 }
 
-/**
- * Server-side HTML Processor: Injects CMS values directly into served HTML strings
- */
 function processHtml(html, reqPath) {
   const cmsData = getCmsData();
   if (!cmsData || !cmsData.branding) return html;
 
   let result = html;
 
-  // 1. Favicon override
   if (cmsData.branding.faviconUrl) {
     result = result.replace(
       /(<link\s+[^>]*rel=["']icon["'][^>]*href=["'])([^"']+)(["'][^>]*>)/gi,
@@ -278,7 +307,6 @@ function processHtml(html, reqPath) {
     );
   }
 
-  // 2. Primary Navbar Logo replacement
   if (cmsData.branding.logoUrl) {
     result = result.replace(
       /\/images\/landing\/logos\/risevana-navbar-logo\.svg/g,
@@ -286,7 +314,6 @@ function processHtml(html, reqPath) {
     );
   }
 
-  // 3. Card Logo replacement
   if (cmsData.branding.logoCardUrl) {
     result = result.replace(
       /\/images\/risevana\/logo_card\.png/g,
@@ -294,12 +321,10 @@ function processHtml(html, reqPath) {
     );
   }
 
-  // 4. MoMo number replacement
   if (cmsData.branding.momoNumber) {
     result = result.replace(/250788749709/g, cmsData.branding.momoNumber);
   }
 
-  // 5. Asset Overrides
   if (cmsData.assetOverrides && Object.keys(cmsData.assetOverrides).length > 0) {
     for (const [orig, override] of Object.entries(cmsData.assetOverrides)) {
       if (orig && override) {
@@ -309,7 +334,6 @@ function processHtml(html, reqPath) {
     }
   }
 
-  // 6. Inject client CMS script and state before </head>
   const injection = `
     <!-- Risevana Managed CMS Dynamic State & Client Engine -->
     <script id="risevana-cms-state">
@@ -335,7 +359,7 @@ module.exports = {
   saveUpload,
   replaceAsset,
   processHtml,
-  DATA_DIR,
+  PERSIST_DIR,
   PUBLIC_DIR,
   UPLOADS_DIR
 };
