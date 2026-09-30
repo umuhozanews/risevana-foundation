@@ -22,6 +22,15 @@
     { "source": "/admissions", "destination": "/admissions.html" },
     { "source": "/tuition", "destination": "/tuition.html" },
     { "source": "/open-house", "destination": "/open-house.html" },
-    { "source": "/api/(.*)", "destination": "/api/index.js" }
+    { "source": "/api/admin/login", "destination": "/api/admin/login.js" },
+    { "source": "/api/admin/logout", "destination": "/api/admin/logout.js" },
+    { "source": "/api/admin/check-auth", "destination": "/api/admin/check-auth.js" },
+    { "source": "/api/admin/change-password", "destination": "/api/admin/change-password.js" },
+    { "source": "/api/cms-data", "destination": "/api/cms-data.js" },
+    { "source": "/api/cms/reset", "destination": "/api/cms/reset.js" },
+    { "source": "/api/assets/list", "destination": "/api/assets/list.js" },
+    { "source": "/api/assets/upload", "destination": "/api/assets/upload.js" },
+    { "source": "/api/assets/replace", "destination": "/api/assets/replace.js" },
+    { "source": "/api/(.*)", "destination": "/api/[...all].js" }
   ]
 }
