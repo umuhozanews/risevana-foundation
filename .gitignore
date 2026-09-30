@@ -2,4 +2,7 @@
 .env*
 node_modules/
 .DS_Store
+data/sessions.json
+data/backups/
+
 

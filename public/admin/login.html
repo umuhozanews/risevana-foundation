@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login — Risevana School CMS</title>
+  <link rel="icon" type="image/png" href="/images/favicon.png?v=risevana">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0d0f12 0%, #15191e 50%, #0d0f12 100%);
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Ambient background glows */
+    .glow-1 {
+      position: absolute;
+      top: 15%;
+      left: 20%;
+      width: 380px;
+      height: 380px;
+      background: radial-gradient(circle, rgba(3, 236, 197, 0.12) 0%, rgba(3, 236, 197, 0) 70%);
+      pointer-events: none;
+      filter: blur(50px);
+    }
+    .glow-2 {
+      position: absolute;
+      bottom: 15%;
+      right: 20%;
+      width: 380px;
+      height: 380px;
+      background: radial-gradient(circle, rgba(252, 222, 45, 0.1) 0%, rgba(252, 222, 45, 0) 70%);
+      pointer-events: none;
+      filter: blur(50px);
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 440px;
+      background: rgba(26, 29, 36, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(3, 236, 197, 0.1);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 44px 38px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .logo-container {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(3, 236, 197, 0.12);
+      border: 1px solid rgba(3, 236, 197, 0.3);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #03ecc5;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 16px;
+    }
+
+    .logo-badge span {
+      width: 7px;
+      height: 7px;
+      background: #03ecc5;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #03ecc5;
+    }
+
+    .login-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .login-subtitle {
+      font-size: 14px;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 8px;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .form-input {
+      width: 100%;
+      background: rgba(15, 18, 24, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 13px 16px;
+      color: #ffffff;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .form-input:focus {
+      border-color: #03ecc5;
+      box-shadow: 0 0 0 3px rgba(3, 236, 197, 0.2);
+      background: rgba(15, 18, 24, 1);
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 4px;
+    }
+    .password-toggle:hover {
+      color: #ffffff;
+    }
+
+    .error-alert {
+      display: none;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fca5a5;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 13px;
+      margin-bottom: 20px;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: #fcde2d;
+      color: #000000;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 20px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 16px rgba(252, 222, 45, 0.25);
+    }
+
+    .btn-submit:hover {
+      background: #ffd600;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(252, 222, 45, 0.35);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .helper-text {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 13px;
+      color: #64748b;
+    }
+
+    .back-home {
+      display: inline-block;
+      margin-top: 16px;
+      color: #03ecc5;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .back-home:hover {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+
+    .credentials-hint {
+      margin-top: 22px;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px dashed rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      font-size: 12px;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+    .credentials-hint strong {
+      color: #fcde2d;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-1"></div>
+  <div class="glow-2"></div>
+
+  <div class="login-card">
+    <div class="logo-container">
+      <div class="logo-badge">
+        <span></span> Risevana School CMS
+      </div>
+      <h1 class="login-title">Administrator Portal</h1>
+      <p class="login-subtitle">Sign in to manage all website words, photos, logos, and digital assets.</p>
+    </div>
+
+    <div id="error-box" class="error-alert">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+      <span id="error-msg">Invalid email or password</span>
+    </div>
+
+    <form id="login-form">
+      <div class="form-group">
+        <label class="form-label" for="email">Admin Email Address</label>
+        <div class="input-wrapper">
+          <input
+            type="email"
+            id="email"
+            class="form-input"
+            required
+            autocomplete="email"
+            placeholder="nextech@gmail.com"
+            value="nextech@gmail.com"
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <div class="input-wrapper">
+          <input
+            type="password"
+            id="password"
+            class="form-input"
+            required
+            autocomplete="current-password"
+            placeholder="••••••••"
+          >
+          <button type="button" id="toggle-pwd" class="password-toggle">Show</button>
+        </div>
+      </div>
+
+      <button type="submit" id="submit-btn" class="btn-submit">
+        <span>Sign In to Dashboard</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
+
+      <div class="credentials-hint">
+        🔑 <strong>Configured Credentials:</strong><br>
+        Email: <code>nextech@gmail.com</code><br>
+        Password: <code>axel@12345</code>
+      </div>
+
+      <div class="helper-text">
+        <a href="/" class="back-home">&larr; Return to Risevana Public Website</a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // Toggle password visibility
+    const pwdInput = document.getElementById('password');
+    const toggleBtn = document.getElementById('toggle-pwd');
+    toggleBtn.addEventListener('click', () => {
+      if (pwdInput.type === 'password') {
+        pwdInput.type = 'text';
+        toggleBtn.textContent = 'Hide';
+      } else {
+        pwdInput.type = 'password';
+        toggleBtn.textContent = 'Show';
+      }
+    });
+
+    // Check if already authenticated
+    fetch('/api/admin/check-auth')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.authenticated) {
+          window.location.href = '/admin';
+        }
+      })
+      .catch(() => {});
+
+    // Handle Form Submit
+    const form = document.getElementById('login-form');
+    const errorBox = document.getElementById('error-box');
+    const errorMsg = document.getElementById('error-msg');
+    const submitBtn = document.getElementById('submit-btn');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorBox.style.display = 'none';
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>Verifying credentials...</span>';
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      try {
+        const response = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          if (result.token) {
+            localStorage.setItem('axel_admin_token', result.token);
+          }
+          submitBtn.innerHTML = '<span>Success! Redirecting...</span>';
+          submitBtn.style.background = '#03ecc5';
+          setTimeout(() => {
+            window.location.href = '/admin';
+          }, 400);
+        } else {
+          errorBox.style.display = 'flex';
+          errorMsg.textContent = result.error || 'Invalid credentials. Please verify email and password.';
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<span>Sign In to Dashboard</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>';
+        }
+      } catch (err) {
+        errorBox.style.display = 'flex';
+        errorMsg.textContent = 'Network error. Please make sure the server is running.';
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>Sign In to Dashboard</span>';
+      }
+    });
+  </script>
+</body>
+</html>

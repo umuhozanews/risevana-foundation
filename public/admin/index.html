@@ -1,0 +1,2502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Risevana School — Admin CMS Dashboard</title>
+  <link rel="icon" type="image/png" href="/images/favicon.png?v=risevana">
+  <style>
+    :root {
+      --bg-dark: #0f1115;
+      --bg-sidebar: #14171d;
+      --bg-card: #1a1e26;
+      --bg-input: #12141a;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.16);
+      --primary: #03ecc5;
+      --primary-hover: #02cfae;
+      --primary-dim: rgba(3, 236, 197, 0.12);
+      --accent: #fcde2d;
+      --accent-hover: #edd12b;
+      --accent-dim: rgba(252, 222, 45, 0.12);
+      --purple: #b38cff;
+      --pink: #fd4fc1;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Top Navigation */
+    .topbar {
+      height: 68px;
+      background: rgba(20, 23, 29, 0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-logo-img {
+      height: 34px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
+    }
+
+    .brand-badge {
+      background: var(--primary-dim);
+      border: 1px solid rgba(3, 236, 197, 0.3);
+      color: var(--primary);
+      padding: 3px 10px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      border: none;
+      outline: none;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--border-hover);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #000000;
+      font-weight: 700;
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 0 16px rgba(3, 236, 197, 0.35);
+    }
+
+    .btn-accent {
+      background: var(--accent);
+      color: #000000;
+      font-weight: 700;
+    }
+    .btn-accent:hover {
+      background: var(--accent-hover);
+      box-shadow: 0 0 16px rgba(252, 222, 45, 0.35);
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.15);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    .btn-danger:hover {
+      background: rgba(239, 68, 68, 0.25);
+    }
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      padding: 6px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .user-pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 8px var(--primary);
+    }
+
+    /* Layout */
+    .app-layout {
+      display: flex;
+      flex: 1;
+      min-height: calc(100vh - 68px);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border-color);
+      padding: 24px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .nav-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 12px 14px 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px;
+      border-radius: var(--radius-md);
+      color: var(--text-muted);
+      font-size: 13.5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-main);
+    }
+
+    .nav-item.active {
+      background: var(--primary-dim);
+      color: var(--primary);
+      font-weight: 600;
+      border: 1px solid rgba(3, 236, 197, 0.25);
+    }
+
+    .nav-icon {
+      font-size: 16px;
+      width: 20px;
+      text-align: center;
+    }
+
+    /* Main Content Area */
+    .content-area {
+      flex: 1;
+      padding: 32px 40px;
+      overflow-y: auto;
+      max-width: 1280px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Tab Panes */
+    .tab-pane {
+      display: none;
+      animation: fadeIn 0.2s ease forwards;
+    }
+    .tab-pane.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Section Headers */
+    .page-header {
+      margin-bottom: 28px;
+    }
+    .page-title {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .page-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 12px;
+    }
+
+    /* Form Grids */
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .form-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 7px;
+    }
+
+    .form-hint {
+      font-size: 11px;
+      color: var(--text-dim);
+      font-weight: 400;
+    }
+
+    .form-input, .form-textarea, .form-select {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 11px 14px;
+      color: #ffffff;
+      font-size: 13.5px;
+      outline: none;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(3, 236, 197, 0.15);
+      background: #0d0f14;
+    }
+
+    .form-textarea {
+      min-height: 85px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    /* Photo / Image Picker Widget */
+    .asset-picker-box {
+      background: rgba(15, 17, 21, 0.7);
+      border: 1px dashed rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: border-color 0.2s;
+    }
+    .asset-picker-box:hover {
+      border-color: var(--primary);
+    }
+
+    .asset-thumb {
+      width: 72px;
+      height: 72px;
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+      background: #000;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      flex-shrink: 0;
+    }
+
+    .asset-thumb.contain {
+      object-fit: contain;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 4px;
+    }
+
+    .asset-picker-controls {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .asset-picker-url {
+      font-size: 12px;
+      font-family: monospace;
+      color: var(--primary);
+      word-break: break-all;
+    }
+
+    .asset-btn-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-xs {
+      padding: 5px 10px;
+      font-size: 12px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* Items List Container (for teachers, programs, cards) */
+    .items-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .item-card {
+      background: rgba(18, 21, 27, 0.9);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+    .item-card:hover {
+      border-color: var(--border-hover);
+    }
+
+    .item-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .item-number {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--accent-dim);
+      padding: 2px 8px;
+      border-radius: 9999px;
+    }
+
+    /* Media Manager Styles */
+    .media-filter-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .filter-pill {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 12.5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .filter-pill:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+    .filter-pill.active {
+      background: var(--accent);
+      color: #000;
+      font-weight: 700;
+      border-color: var(--accent);
+    }
+
+    .media-search-input {
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: 9999px;
+      padding: 8px 18px;
+      color: #fff;
+      font-size: 13px;
+      width: 260px;
+      outline: none;
+    }
+    .media-search-input:focus {
+      border-color: var(--primary);
+    }
+
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+    }
+
+    .media-card {
+      background: rgba(18, 21, 27, 0.85);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .media-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+
+    .media-card-img-wrap {
+      height: 120px;
+      width: 100%;
+      background: #08090b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .media-card-img {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+      transition: transform 0.2s;
+    }
+    .media-card:hover .media-card-img {
+      transform: scale(1.05);
+    }
+
+    .media-card-body {
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+
+    .media-card-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .media-card-meta {
+      font-size: 11px;
+      color: var(--text-dim);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .media-card-actions {
+      display: flex;
+      gap: 4px;
+      padding: 8px 12px 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 24px;
+    }
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      max-width: 820px;
+      width: 100%;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+      animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalPop {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 24px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px;
+    }
+    .modal-close:hover {
+      color: #fff;
+    }
+
+    .modal-body {
+      padding: 20px 24px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast {
+      pointer-events: auto;
+      background: rgba(20, 24, 30, 0.95);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideIn 0.2s ease forwards;
+    }
+    .toast.success {
+      border-color: rgba(3, 236, 197, 0.5);
+      color: var(--primary);
+    }
+    .toast.error {
+      border-color: rgba(239, 68, 68, 0.5);
+      color: #fca5a5;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Stats Overview Card */
+    .overview-hero-card {
+      background: linear-gradient(135deg, rgba(3, 236, 197, 0.08) 0%, rgba(252, 222, 45, 0.05) 100%);
+      border: 1px solid rgba(3, 236, 197, 0.2);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+
+    .stat-pill {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 12px 18px;
+      border-radius: var(--radius-md);
+      text-align: center;
+    }
+    .stat-num {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    /* Hidden File Input */
+    .file-input-hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="topbar">
+    <div class="brand-group">
+      <img id="topbar-logo-preview" src="/images/landing/logos/risevana-navbar-logo.svg" alt="Risevana Logo" class="brand-logo-img">
+      <span class="brand-badge">Site Management CMS</span>
+    </div>
+
+    <div class="topbar-actions">
+      <div class="user-pill">
+        <span class="user-pill-dot"></span>
+        <span id="admin-user-email">nextech@gmail.com</span>
+      </div>
+
+      <a href="/" target="_blank" class="btn btn-secondary" title="Preview public website in new tab">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        <span>View Live Site</span>
+      </a>
+
+      <button id="btn-save-all" class="btn btn-accent">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+        <span>Save All Changes</span>
+      </button>
+
+      <button id="btn-logout" class="btn btn-secondary" title="Sign out">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        <span>Logout</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Application Layout -->
+  <div class="app-layout">
+    <!-- Left Sidebar -->
+    <aside class="sidebar">
+      <div class="nav-label">Management</div>
+
+      <div class="nav-item active" data-tab="tab-overview">
+        <span class="nav-icon">📊</span>
+        <span>Dashboard Overview</span>
+      </div>
+
+      <div class="nav-item" data-tab="tab-branding">
+        <span class="nav-icon">🎨</span>
+        <span>Brand & Logos</span>
+      </div>
+
+      <div class="nav-item" data-tab="tab-home">
+        <span class="nav-icon">🏠</span>
+        <span>Home Page</span>
+      </div>
+
+      <div class="nav-item" data-tab="tab-programs">
+        <span class="nav-icon">📚</span>
+        <span>Programs & Learning</span>
+      </div>
+
+      <div class="nav-item" data-tab="tab-teachers">
+        <span class="nav-icon">👩‍🏫</span>
+        <span>Teachers & Team</span>
+      </div>
+
+      <div class="nav-item" data-tab="tab-donations">
+        <span class="nav-icon">💛</span>
+        <span>Donations & Tuition</span>
+      </div>
+
+      <div class="nav-item" data-tab="tab-about">
+        <span class="nav-icon">📖</span>
+        <span>About Us & Founder</span>
+      </div>
+
+      <div class="nav-item" data-tab="tab-contact">
+        <span class="nav-icon">📞</span>
+        <span>Contact & Visit</span>
+      </div>
+
+      <div class="nav-label">Assets & System</div>
+
+      <div class="nav-item" data-tab="tab-media">
+        <span class="nav-icon">📁</span>
+        <span>Media Asset Manager</span>
+      </div>
+
+      <div class="nav-item" data-tab="tab-settings">
+        <span class="nav-icon">⚙</span>
+        <span>Settings & Backup</span>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="content-area">
+
+      <!-- TAB 1: OVERVIEW -->
+      <section id="tab-overview" class="tab-pane active">
+        <div class="page-header">
+          <h1 class="page-title">Website Management Dashboard</h1>
+          <p class="page-desc">Complete administrative control over every word, headline, photo, logo, and media asset across Risevana School.</p>
+        </div>
+
+        <div class="overview-hero-card">
+          <div>
+            <h2 style="font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 6px;">Live & Fully Synchronized</h2>
+            <p style="color: var(--text-muted); font-size: 13.5px; max-width: 540px;">
+              Every change saved here updates across all public pages instantly with zero build step. You can edit text, swap photos, or upload brand assets below.
+            </p>
+          </div>
+          <div style="display: flex; gap: 12px;">
+            <div class="stat-pill">
+              <div class="stat-num" id="stat-total-assets">1,700+</div>
+              <div class="stat-label">Available Assets</div>
+            </div>
+            <div class="stat-pill">
+              <div class="stat-num" id="stat-momo-preview">250788749709</div>
+              <div class="stat-label">MoMo Number</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <!-- Quick Status Card: Current Branding -->
+          <div class="card">
+            <div class="card-title">Active Brand Identity</div>
+            <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 16px;">
+              <div style="background: #000; padding: 12px 18px; border-radius: 12px; border: 1px solid var(--border-color);">
+                <img id="overview-logo-preview" src="/images/landing/logos/risevana-navbar-logo.svg" style="height: 38px; width: auto; object-fit: contain;">
+              </div>
+              <div>
+                <h3 id="overview-school-name" style="font-size: 16px; font-weight: 700;">Risevana Foundation</h3>
+                <p id="overview-school-tagline" style="font-size: 12.5px; color: var(--text-muted);">Empowering Young Rural Minds in Rwanda</p>
+              </div>
+            </div>
+            <button class="btn btn-secondary btn-xs" onclick="switchTab('tab-branding')">Edit Brand & Logos &rarr;</button>
+          </div>
+
+          <!-- Quick Status Card: Active Hero Photo -->
+          <div class="card">
+            <div class="card-title">Homepage Hero Banner</div>
+            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+              <img id="overview-hero-img" src="/images/landing/heroes/risevana-ecd-3.jpeg" style="width: 100px; height: 60px; object-fit: cover; border-radius: 8px;">
+              <div>
+                <div style="font-size: 13.5px; font-weight: 700;" id="overview-hero-title">risevana</div>
+                <div style="font-size: 12px; color: var(--text-muted); line-height: 1.4;" id="overview-hero-sub">Early childhood education & mobile digital outreach.</div>
+              </div>
+            </div>
+            <button class="btn btn-secondary btn-xs" onclick="switchTab('tab-home')">Edit Homepage &rarr;</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Category Fast Shortcuts</div>
+          <div class="form-grid-3">
+            <div style="background: rgba(255,255,255,0.03); padding: 14px; border-radius: 10px; cursor: pointer;" onclick="switchTab('tab-programs')">
+              <div style="font-size: 14px; font-weight: 700; color: var(--primary);">📚 Programs</div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Manage ECD, Mobile Classroom, Nutrition programs & photos.</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); padding: 14px; border-radius: 10px; cursor: pointer;" onclick="switchTab('tab-teachers')">
+              <div style="font-size: 14px; font-weight: 700; color: var(--accent);">👩‍🏫 Teachers & Team</div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Add/edit educator cards, bios, stats, and portraits.</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); padding: 14px; border-radius: 10px; cursor: pointer;" onclick="switchTab('tab-donations')">
+              <div style="font-size: 14px; font-weight: 700; color: var(--pink);">💛 Donations & MoMo</div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Update MoMo account phone number & donation tiers.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: BRAND & LOGOS -->
+      <section id="tab-branding" class="tab-pane">
+        <div class="page-header">
+          <h1 class="page-title">🎨 Brand & Logos Management</h1>
+          <p class="page-desc">Change the school logo, card logos, favicon, name, tagline, and Mobile Money numbers across the entire website.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Official Logos & Favicon</div>
+          <div class="form-grid-2">
+            <!-- Header Navbar Logo -->
+            <div class="form-group">
+              <label class="form-label">
+                <span>Header / Navbar Logo</span>
+                <span class="form-hint">Displayed on all top navigation bars</span>
+              </label>
+              <div class="asset-picker-box">
+                <img id="branding-logo-preview" src="" class="asset-thumb contain">
+                <div class="asset-picker-controls">
+                  <input type="text" id="branding-logoUrl" class="form-input" style="font-size: 12px;">
+                  <div class="asset-btn-row">
+                    <button class="btn btn-secondary btn-xs" onclick="triggerUpload('branding-logoUrl', 'branding-logo-preview')">Upload New Logo</button>
+                    <button class="btn btn-secondary btn-xs" onclick="openMediaPicker('branding-logoUrl', 'branding-logo-preview', 'Logos')">Choose from Library</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card / Secondary Logo -->
+            <div class="form-group">
+              <label class="form-label">
+                <span>Secondary / Card Logo</span>
+                <span class="form-hint">Used in promo cards & footers</span>
+              </label>
+              <div class="asset-picker-box">
+                <img id="branding-logoCard-preview" src="" class="asset-thumb contain">
+                <div class="asset-picker-controls">
+                  <input type="text" id="branding-logoCardUrl" class="form-input" style="font-size: 12px;">
+                  <div class="asset-btn-row">
+                    <button class="btn btn-secondary btn-xs" onclick="triggerUpload('branding-logoCardUrl', 'branding-logoCard-preview')">Upload File</button>
+                    <button class="btn btn-secondary btn-xs" onclick="openMediaPicker('branding-logoCardUrl', 'branding-logoCard-preview', 'Logos')">Library</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Favicon -->
+            <div class="form-group">
+              <label class="form-label">
+                <span>Website Favicon</span>
+                <span class="form-hint">Browser tab icon</span>
+              </label>
+              <div class="asset-picker-box">
+                <img id="branding-favicon-preview" src="" class="asset-thumb contain">
+                <div class="asset-picker-controls">
+                  <input type="text" id="branding-faviconUrl" class="form-input" style="font-size: 12px;">
+                  <div class="asset-btn-row">
+                    <button class="btn btn-secondary btn-xs" onclick="triggerUpload('branding-faviconUrl', 'branding-favicon-preview')">Upload Favicon</button>
+                    <button class="btn btn-secondary btn-xs" onclick="openMediaPicker('branding-faviconUrl', 'branding-favicon-preview', 'Logos')">Library</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Main CTA Button -->
+            <div class="form-group">
+              <label class="form-label">Global Navbar CTA Button</label>
+              <div style="display: flex; gap: 8px;">
+                <input type="text" id="branding-ctaText" class="form-input" placeholder="Start your risevana journey">
+                <input type="text" id="branding-ctaLink" class="form-input" placeholder="/contact" style="width: 140px;">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Brand Identity & Essential Contact</div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">School / Organization Name</label>
+              <input type="text" id="branding-schoolName" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Official Tagline</label>
+              <input type="text" id="branding-tagline" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">MoMo Donation Phone Number</label>
+              <input type="text" id="branding-momoNumber" class="form-input" placeholder="250788749709">
+            </div>
+            <div class="form-group">
+              <label class="form-label">MoMo Account Holder / Merchant Name</label>
+              <input type="text" id="branding-momoAccountName" class="form-input" placeholder="Risevana Foundation">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Contact Email</label>
+              <input type="email" id="branding-contactEmail" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Contact Phone</label>
+              <input type="text" id="branding-contactPhone" class="form-input">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: HOME PAGE -->
+      <section id="tab-home" class="tab-pane">
+        <div class="page-header">
+          <h1 class="page-title">🏠 Home Page Words & Photos</h1>
+          <p class="page-desc">Manage the hero section, headlines, hero background photo, "This is for you if" cards, and impact stats.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Homepage Hero Section</div>
+          <div class="form-grid-2">
+            <div>
+              <div class="form-group">
+                <label class="form-label">Hero Badge / Pill</label>
+                <input type="text" id="home-hero-badge" class="form-input">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Main Hero Title</label>
+                <input type="text" id="home-hero-title" class="form-input">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Hero Subtitle / Description</label>
+                <textarea id="home-hero-subtitle" class="form-textarea"></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Hero CTA Button Text & Link</label>
+                <div style="display:flex; gap: 8px;">
+                  <input type="text" id="home-hero-ctaText" class="form-input">
+                  <input type="text" id="home-hero-ctaLink" class="form-input" style="width: 140px;">
+                </div>
+              </div>
+            </div>
+
+            <!-- Hero Background Photo -->
+            <div class="form-group">
+              <label class="form-label">
+                <span>Hero Background Photo</span>
+                <span class="form-hint">Main visual behind headline</span>
+              </label>
+              <div class="asset-picker-box" style="flex-direction: column; align-items: stretch;">
+                <img id="home-hero-bg-preview" src="" style="width: 100%; height: 160px; object-fit: cover; border-radius: 8px;">
+                <input type="text" id="home-hero-bgImage" class="form-input" style="font-size: 12px; margin-top: 8px;">
+                <div class="asset-btn-row" style="margin-top: 6px;">
+                  <button class="btn btn-secondary btn-xs" onclick="triggerUpload('home-hero-bgImage', 'home-hero-bg-preview')">Upload New Hero Photo</button>
+                  <button class="btn btn-secondary btn-xs" onclick="openMediaPicker('home-hero-bgImage', 'home-hero-bg-preview', 'Hero & Banners')">Pick from Gallery</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- "This is for you if..." Section -->
+        <div class="card">
+          <div class="card-title">"This is for you if..." Cards</div>
+          <div class="form-group">
+            <label class="form-label">Section Title</label>
+            <input type="text" id="home-foryou-title" class="form-input" value="This is for you if...">
+          </div>
+          <div class="form-grid-2" id="home-foryou-cards-container">
+            <!-- Dynamically populated cards -->
+          </div>
+        </div>
+
+        <!-- Education Feature Cards -->
+        <div class="card">
+          <div class="card-title">Transforming Education Feature Cards</div>
+          <div class="form-group">
+            <label class="form-label">Section Title</label>
+            <input type="text" id="home-education-title" class="form-input">
+          </div>
+          <div class="form-grid-2" id="home-education-cards-container">
+            <!-- Dynamically populated cards -->
+          </div>
+        </div>
+
+        <!-- 100% Free School Banner -->
+        <div class="card">
+          <div class="card-title">100% Free School Banner Section</div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Banner Headline</label>
+              <input type="text" id="home-free-title" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Banner Description</label>
+              <textarea id="home-free-desc" class="form-textarea"></textarea>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: PROGRAMS & EDUCATION -->
+      <section id="tab-programs" class="tab-pane">
+        <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h1 class="page-title">📚 Educational Programs Management</h1>
+            <p class="page-desc">Add, edit, or remove programs like ECD Nursery, Mobile Laptop Outreach, and Nutrition with custom photos.</p>
+          </div>
+          <button class="btn btn-primary" onclick="addNewProgram()">+ Add New Program</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Programs Page Header</div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Page Headline</label>
+              <input type="text" id="prog-hero-title" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Page Subtitle</label>
+              <input type="text" id="prog-hero-sub" class="form-input">
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Active Program Cards</div>
+          <div class="items-container" id="programs-list-container">
+            <!-- Program cards dynamically generated -->
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: TEACHERS & TEAM -->
+      <section id="tab-teachers" class="tab-pane">
+        <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h1 class="page-title">👩‍🏫 Teachers & Teaching Team</h1>
+            <p class="page-desc">Manage teacher cards, educator photos, bios, timezones, and teaching statistics.</p>
+          </div>
+          <button class="btn btn-primary" onclick="addNewTeacher()">+ Add New Teacher</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Teachers Page Header & Stats</div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Hero Title</label>
+              <input type="text" id="teach-hero-title" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Hero Subtitle</label>
+              <textarea id="teach-hero-sub" class="form-textarea"></textarea>
+            </div>
+          </div>
+
+          <div style="margin-top: 14px;">
+            <label class="form-label">4 Key Stat Badges</label>
+            <div class="form-grid-2" id="teachers-stats-container">
+              <!-- Dynamically populated stats -->
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Teacher Profiles Roster</div>
+          <div class="items-container" id="teachers-list-container">
+            <!-- Teacher cards dynamically generated -->
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 6: DONATIONS & TUITION -->
+      <section id="tab-donations" class="tab-pane">
+        <div class="page-header">
+          <h1 class="page-title">💛 Donations & 100% Free Tuition</h1>
+          <p class="page-desc">Change donation copy, Mobile Money details, instructions, and free education feature cards.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Mobile Money (MoMo) Settings</div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">MoMo Account Phone Number</label>
+              <input type="text" id="donations-momo-number" class="form-input" placeholder="250788749709">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Merchant Name</label>
+              <input type="text" id="donations-momo-merchant" class="form-input" placeholder="Risevana Foundation">
+            </div>
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label class="form-label">Payment Instructions for Donors</label>
+              <textarea id="donations-momo-instructions" class="form-textarea"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Donations Page Headline</div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Page Headline</label>
+              <input type="text" id="donations-hero-title" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Page Subtitle</label>
+              <textarea id="donations-hero-sub" class="form-textarea"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">What Every Child Receives Free (4 Pillars)</div>
+          <div class="form-grid-2" id="donations-pillars-container">
+            <!-- Dynamically populated cards -->
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 7: ABOUT US & FOUNDER -->
+      <section id="tab-about" class="tab-pane">
+        <div class="page-header">
+          <h1 class="page-title">📖 About Us & Founder</h1>
+          <p class="page-desc">Edit our founding story, founder portrait photo, and organization background.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Founder Profile & Photo</div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Founder Portrait Photo</label>
+              <div class="asset-picker-box">
+                <img id="about-founder-preview" src="" class="asset-thumb">
+                <div class="asset-picker-controls">
+                  <input type="text" id="about-founder-photo" class="form-input" style="font-size: 12px;">
+                  <div class="asset-btn-row">
+                    <button class="btn btn-secondary btn-xs" onclick="triggerUpload('about-founder-photo', 'about-founder-preview')">Upload New Photo</button>
+                    <button class="btn btn-secondary btn-xs" onclick="openMediaPicker('about-founder-photo', 'about-founder-preview', 'About Us')">Library</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div class="form-group">
+                <label class="form-label">Founder Name</label>
+                <input type="text" id="about-founder-name" class="form-input">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Founder Title / Role</label>
+                <input type="text" id="about-founder-role" class="form-input">
+              </div>
+            </div>
+
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label class="form-label">Founder Biography / Message</label>
+              <textarea id="about-founder-bio" class="form-textarea" style="min-height: 100px;"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Story Headlines & Paragraphs</div>
+          <div class="form-group">
+            <label class="form-label">Story Headline</label>
+            <input type="text" id="about-story-title" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Story Paragraph 1</label>
+            <textarea id="about-story-p1" class="form-textarea"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Story Paragraph 2</label>
+            <textarea id="about-story-p2" class="form-textarea"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 8: CONTACT & VISIT -->
+      <section id="tab-contact" class="tab-pane">
+        <div class="page-header">
+          <h1 class="page-title">📞 Contact & Campus Visit Information</h1>
+          <p class="page-desc">Manage physical address, phone lines, email addresses, and visit hours.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Contact Information</div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Page Headline</label>
+              <input type="text" id="contact-hero-title" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Page Subtitle</label>
+              <input type="text" id="contact-hero-sub" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Physical Location / Address</label>
+              <input type="text" id="contact-address" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Primary Telephone</label>
+              <input type="text" id="contact-phone" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Inquiry Email</label>
+              <input type="email" id="contact-email" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Operating / Visit Hours</label>
+              <input type="text" id="contact-hours" class="form-input">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 9: MEDIA ASSET MANAGER -->
+      <section id="tab-media" class="tab-pane">
+        <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <h1 class="page-title">📁 Media Asset Manager</h1>
+            <p class="page-desc">Browse, search, replace in-place, or upload any asset file across all categories on the server.</p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-primary" onclick="triggerGeneralUpload()">+ Upload New Asset</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="media-filter-bar">
+            <div class="filter-tabs">
+              <button class="filter-pill active" onclick="setMediaFilter('all', this)">All Assets</button>
+              <button class="filter-pill" onclick="setMediaFilter('Logos', this)">Logos</button>
+              <button class="filter-pill" onclick="setMediaFilter('Hero & Banners', this)">Hero Banners</button>
+              <button class="filter-pill" onclick="setMediaFilter('School & Classrooms', this)">School & ECD</button>
+              <button class="filter-pill" onclick="setMediaFilter('Teachers', this)">Teachers</button>
+              <button class="filter-pill" onclick="setMediaFilter('Programs', this)">Programs</button>
+              <button class="filter-pill" onclick="setMediaFilter('Uploads', this)">Uploads</button>
+            </div>
+            <input type="text" id="media-search" class="media-search-input" placeholder="Search assets by name..." oninput="handleMediaSearch()">
+          </div>
+
+          <div id="media-grid-container" class="media-grid">
+            <!-- Asset cards dynamically generated -->
+          </div>
+
+          <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 24px;">
+            <button id="media-prev-page" class="btn btn-secondary btn-xs" onclick="changeMediaPage(-1)">&larr; Prev Page</button>
+            <span id="media-page-info" style="font-size: 13px; color: var(--text-muted);">Page 1 of 1</span>
+            <button id="media-next-page" class="btn btn-secondary btn-xs" onclick="changeMediaPage(1)">Next Page &rarr;</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 10: SETTINGS & BACKUP -->
+      <section id="tab-settings" class="tab-pane">
+        <div class="page-header">
+          <h1 class="page-title">⚙ Settings, Security & Data Backup</h1>
+          <p class="page-desc">Manage administrator password, export website backups, or restore factory defaults.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Change Admin Password</div>
+          <form id="form-change-pwd" style="max-width: 420px;">
+            <div class="form-group">
+              <label class="form-label">Current Password</label>
+              <input type="password" id="pwd-old" class="form-input" required placeholder="••••••••">
+            </div>
+            <div class="form-group">
+              <label class="form-label">New Password</label>
+              <input type="password" id="pwd-new" class="form-input" required placeholder="At least 6 characters">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Confirm New Password</label>
+              <input type="password" id="pwd-confirm" class="form-input" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn btn-secondary">Update Password</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Data Backup & Recovery</div>
+          <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 16px;">
+            Export a complete JSON snapshot of all your content changes, or restore the original factory preset if needed.
+          </p>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <button class="btn btn-secondary" onclick="exportBackup()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              <span>Download JSON Backup</span>
+            </button>
+            <button class="btn btn-danger" onclick="restoreDefaults()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><polyline points="23 20 23 14 17 14"></polyline><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path></svg>
+              <span>Restore Factory Defaults</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Media Picker Modal (when selecting photo from library) -->
+  <div id="modal-media-picker" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">Select Asset from Media Library</h3>
+        <button class="modal-close" onclick="closeMediaPicker()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+          <input type="text" id="modal-media-search" class="form-input" placeholder="Filter by asset name..." oninput="handleModalSearch()">
+        </div>
+        <div id="modal-media-grid" class="media-grid" style="grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));">
+          <!-- Assets listed here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- In-Place Asset Replacer Modal -->
+  <div id="modal-replace-asset" class="modal-overlay">
+    <div class="modal-box" style="max-width: 520px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Replace Asset In-Place</h3>
+        <button class="modal-close" onclick="closeReplaceModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 16px;">
+          Select a replacement image from your computer to overwrite this file directly on the server. Everywhere this file is used will be updated immediately.
+        </p>
+        <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; margin-bottom: 16px;">
+          <div style="font-size: 11px; color: var(--text-dim);">Target Asset Path:</div>
+          <code id="replace-target-path" style="color: var(--primary); font-size: 13px;"></code>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Choose Replacement File</label>
+          <input type="file" id="replace-file-input" class="form-input" accept="image/*">
+        </div>
+        <div id="replace-preview-wrap" style="display:none; text-align:center; margin-bottom: 16px;">
+          <div style="font-size: 11px; color: var(--text-dim); margin-bottom: 4px;">New Image Preview:</div>
+          <img id="replace-preview-img" style="max-height: 140px; border-radius: 8px; border: 1px solid var(--border-color);">
+        </div>
+        <button id="btn-confirm-replace" class="btn btn-accent" style="width: 100%;" onclick="submitAssetReplace()">Confirm & Replace Asset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden File Input for instant uploads -->
+  <input type="file" id="generic-file-input" class="file-input-hidden" accept="image/*">
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <script>
+    // Global State
+    let cmsData = {};
+    let activeMediaCategory = 'all';
+    let mediaSearchQuery = '';
+    let currentMediaPage = 1;
+    let targetInputForPicker = null;
+    let targetPreviewForPicker = null;
+    let currentReplaceTarget = '';
+
+    // Initialize Dashboard
+    document.addEventListener('DOMContentLoaded', async () => {
+      await checkAuth();
+      await loadCmsData();
+      await loadMediaAssets();
+      setupTabs();
+      setupSaveShortcut();
+      setupPasswordForm();
+    });
+
+    // Check Authentication
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/admin/check-auth');
+        const auth = await res.json();
+        if (!auth || !auth.authenticated) {
+          window.location.href = '/admin/login';
+        } else {
+          document.getElementById('admin-user-email').textContent = auth.email || 'nextech@gmail.com';
+        }
+      } catch (e) {
+        window.location.href = '/admin/login';
+      }
+    }
+
+    // Logout
+    document.getElementById('btn-logout').addEventListener('click', async () => {
+      try {
+        await fetch('/api/admin/logout', { method: 'POST' });
+        localStorage.removeItem('axel_admin_token');
+        showToast('Logged out successfully', 'success');
+        setTimeout(() => { window.location.href = '/admin/login'; }, 400);
+      } catch (_) {
+        window.location.href = '/admin/login';
+      }
+    });
+
+    // Load CMS Data
+    async function loadCmsData() {
+      try {
+        const res = await fetch('/api/cms-data');
+        cmsData = await res.json();
+        populateFormFields();
+      } catch (err) {
+        showToast('Error loading website content', 'error');
+      }
+    }
+
+    // Populate all Form Fields from cmsData
+    function populateFormFields() {
+      if (!cmsData || !cmsData.branding) return;
+
+      // 1. Branding
+      const b = cmsData.branding;
+      setVal('branding-schoolName', b.schoolName);
+      setVal('branding-tagline', b.tagline);
+      setVal('branding-logoUrl', b.logoUrl);
+      setVal('branding-logoCardUrl', b.logoCardUrl);
+      setVal('branding-faviconUrl', b.faviconUrl);
+      setVal('branding-momoNumber', b.momoNumber);
+      setVal('branding-momoAccountName', b.momoAccountName);
+      setVal('branding-contactEmail', b.contactEmail);
+      setVal('branding-contactPhone', b.contactPhone);
+      setVal('branding-ctaText', b.ctaButtonText);
+      setVal('branding-ctaLink', b.ctaButtonLink);
+
+      setImg('topbar-logo-preview', b.logoUrl);
+      setImg('branding-logo-preview', b.logoUrl);
+      setImg('branding-logoCard-preview', b.logoCardUrl);
+      setImg('branding-favicon-preview', b.faviconUrl);
+      setImg('overview-logo-preview', b.logoUrl);
+      setText('overview-school-name', b.schoolName);
+      setText('overview-school-tagline', b.tagline);
+      setText('stat-momo-preview', b.momoNumber);
+
+      // 2. Home Page
+      if (cmsData.home) {
+        const h = cmsData.home;
+        if (h.hero) {
+          setVal('home-hero-badge', h.hero.badge);
+          setVal('home-hero-title', h.hero.title);
+          setVal('home-hero-subtitle', h.hero.subtitle);
+          setVal('home-hero-bgImage', h.hero.bgImage);
+          setVal('home-hero-ctaText', h.hero.ctaText);
+          setVal('home-hero-ctaLink', h.hero.ctaLink);
+
+          setImg('home-hero-bg-preview', h.hero.bgImage);
+          setImg('overview-hero-img', h.hero.bgImage);
+          setText('overview-hero-title', h.hero.title);
+          setText('overview-hero-sub', h.hero.subtitle);
+        }
+
+        // "This is for you if..."
+        if (h.thisIsForYou) {
+          setVal('home-foryou-title', h.thisIsForYou.title);
+          renderForYouCards(h.thisIsForYou.cards || []);
+        }
+
+        // Education Features
+        if (h.education) {
+          setVal('home-education-title', h.education.title);
+          renderEducationCards(h.education.cards || []);
+        }
+
+        // Free banner
+        if (h.freeSchoolBanner) {
+          setVal('home-free-title', h.freeSchoolBanner.title);
+          setVal('home-free-desc', h.freeSchoolBanner.description);
+        }
+      }
+
+      // 3. Programs
+      if (cmsData.programs) {
+        const p = cmsData.programs;
+        if (p.hero) {
+          setVal('prog-hero-title', p.hero.title);
+          setVal('prog-hero-sub', p.hero.subtitle);
+        }
+        renderProgramsList(p.list || []);
+      }
+
+      // 4. Teachers
+      if (cmsData.teachers) {
+        const t = cmsData.teachers;
+        if (t.hero) {
+          setVal('teach-hero-title', t.hero.title);
+          setVal('teach-hero-sub', t.hero.subtitle);
+        }
+        renderTeachersStats(t.stats || []);
+        renderTeachersList(t.teachersList || []);
+      }
+
+      // 5. Donations
+      if (cmsData.donations) {
+        const d = cmsData.donations;
+        if (d.momo) {
+          setVal('donations-momo-number', d.momo.number);
+          setVal('donations-momo-merchant', d.momo.merchantName);
+          setVal('donations-momo-instructions', d.momo.instructions);
+        }
+        if (d.hero) {
+          setVal('donations-hero-title', d.hero.title);
+          setVal('donations-hero-sub', d.hero.subtitle);
+        }
+        renderDonationPillars(d.whatEveryChildReceives || []);
+      }
+
+      // 6. About Us
+      if (cmsData.about) {
+        const a = cmsData.about;
+        if (a.hero) setVal('about-story-title', a.hero.title);
+        if (a.story) {
+          setVal('about-story-p1', a.story[0] || '');
+          setVal('about-story-p2', a.story[1] || '');
+        }
+        if (a.founder) {
+          setVal('about-founder-name', a.founder.name);
+          setVal('about-founder-role', a.founder.role);
+          setVal('about-founder-bio', a.founder.bio);
+          setVal('about-founder-photo', a.founder.photo);
+          setImg('about-founder-preview', a.founder.photo);
+        }
+      }
+
+      // 7. Contact
+      if (cmsData.contact) {
+        const c = cmsData.contact;
+        if (c.hero) {
+          setVal('contact-hero-title', c.hero.title);
+          setVal('contact-hero-sub', c.hero.subtitle);
+        }
+        setVal('contact-address', c.address);
+        setVal('contact-phone', c.phone);
+        setVal('contact-email', c.email);
+        setVal('contact-hours', c.hours);
+      }
+    }
+
+    // Helper functions for safe DOM updates
+    function setVal(id, val) {
+      const el = document.getElementById(id);
+      if (el && val !== undefined) el.value = val;
+    }
+    function getVal(id) {
+      const el = document.getElementById(id);
+      return el ? el.value : '';
+    }
+    function setImg(id, src) {
+      const el = document.getElementById(id);
+      if (el && src) el.src = src;
+    }
+    function setText(id, text) {
+      const el = document.getElementById(id);
+      if (el && text !== undefined) el.textContent = text;
+    }
+
+    // Dynamic Renderers: "This is for you if..."
+    function renderForYouCards(cards) {
+      const container = document.getElementById('home-foryou-cards-container');
+      container.innerHTML = '';
+      cards.forEach((c, idx) => {
+        const cardDiv = document.createElement('div');
+        cardDiv.className = 'item-card';
+        cardDiv.innerHTML = `
+          <div class="item-header">
+            <span class="item-number">Card #${idx + 1}</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Card Message / Text</label>
+            <input type="text" class="form-input foryou-title-input" data-idx="${idx}" value="${c.title || ''}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Card Illustration / Photo</label>
+            <div class="asset-picker-box">
+              <img id="foryou-thumb-${idx}" src="${c.image || ''}" class="asset-thumb contain">
+              <div class="asset-picker-controls">
+                <input type="text" id="foryou-img-${idx}" class="form-input" style="font-size: 11px;" value="${c.image || ''}">
+                <div class="asset-btn-row">
+                  <button class="btn btn-secondary btn-xs" onclick="triggerUpload('foryou-img-${idx}', 'foryou-thumb-${idx}')">Upload</button>
+                  <button class="btn btn-secondary btn-xs" onclick="openMediaPicker('foryou-img-${idx}', 'foryou-thumb-${idx}')">Library</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        container.appendChild(cardDiv);
+      });
+    }
+
+    // Dynamic Renderers: Education Feature Cards
+    function renderEducationCards(cards) {
+      const container = document.getElementById('home-education-cards-container');
+      container.innerHTML = '';
+      cards.forEach((c, idx) => {
+        const cardDiv = document.createElement('div');
+        cardDiv.className = 'item-card';
+        cardDiv.innerHTML = `
+          <div class="item-header">
+            <span class="item-number">Feature #${idx + 1}</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Feature Headline</label>
+            <input type="text" class="form-input edu-title-input" data-idx="${idx}" value="${c.title || ''}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea class="form-textarea edu-desc-input" data-idx="${idx}">${c.description || ''}</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Illustration / Icon</label>
+            <div class="asset-picker-box">
+              <img id="edu-thumb-${idx}" src="${c.image || ''}" class="asset-thumb contain">
+              <div class="asset-picker-controls">
+                <input type="text" id="edu-img-${idx}" class="form-input" style="font-size: 11px;" value="${c.image || ''}">
+                <div class="asset-btn-row">
+                  <button class="btn btn-secondary btn-xs" onclick="triggerUpload('edu-img-${idx}', 'edu-thumb-${idx}')">Upload</button>
+                  <button class="btn btn-secondary btn-xs" onclick="openMediaPicker('edu-img-${idx}', 'edu-thumb-${idx}')">Library</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        container.appendChild(cardDiv);
+      });
+    }
+
+    // Dynamic Renderers: Programs List
+    function renderProgramsList(list) {
+      const container = document.getElementById('programs-list-container');
+      container.innerHTML = '';
+      list.forEach((p, idx) => {
+        const div = document.createElement('div');
+        div.className = 'item-card';
+        div.innerHTML = `
+          <div class="item-header">
+            <span class="item-number">Program #${idx + 1}</span>
+            <button class="btn btn-danger btn-xs" onclick="deleteProgram(${idx})">Delete Program</button>
+          </div>
+          <div class="form-grid-2">
+            <div>
+              <div class="form-group">
+                <label class="form-label">Program Title</label>
+                <input type="text" class="form-input prog-title-input" data-idx="${idx}" value="${p.title || ''}">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Age Group / Badge</label>
+                <input type="text" class="form-input prog-badge-input" data-idx="${idx}" value="${p.badge || ''}">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea class="form-textarea prog-desc-input" data-idx="${idx}">${p.description || ''}</textarea>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Program Photo</label>
+              <div class="asset-picker-box" style="flex-direction: column; align-items: stretch;">
+                <img id="prog-thumb-${idx}" src="${p.image || ''}" style="width: 100%; height: 130px; object-fit: cover; border-radius: 8px;">
+                <input type="text" id="prog-img-${idx}" class="form-input" style="font-size: 11px; margin-top: 8px;" value="${p.image || ''}">
+                <div class="asset-btn-row" style="margin-top: 6px;">
+                  <button class="btn btn-secondary btn-xs" onclick="triggerUpload('prog-img-${idx}', 'prog-thumb-${idx}')">Upload Photo</button>
+                  <button class="btn btn-secondary btn-xs" onclick="openMediaPicker('prog-img-${idx}', 'prog-thumb-${idx}', 'Programs')">Pick from Gallery</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function addNewProgram() {
+      if (!cmsData.programs) cmsData.programs = { list: [] };
+      if (!cmsData.programs.list) cmsData.programs.list = [];
+      cmsData.programs.list.push({
+        id: 'new-program-' + Date.now(),
+        title: 'New Community Program',
+        badge: 'All Ages',
+        description: 'Empowering children with quality learning opportunities.',
+        image: '/images/risevana/risevana_ecd_1.jpeg'
+      });
+      renderProgramsList(cmsData.programs.list);
+      showToast('New program added. Remember to click Save Changes!', 'success');
+    }
+
+    function deleteProgram(idx) {
+      if (confirm('Are you sure you want to delete this program?')) {
+        cmsData.programs.list.splice(idx, 1);
+        renderProgramsList(cmsData.programs.list);
+        showToast('Program removed', 'success');
+      }
+    }
+
+    // Dynamic Renderers: Teachers Stats
+    function renderTeachersStats(stats) {
+      const container = document.getElementById('teachers-stats-container');
+      container.innerHTML = '';
+      stats.forEach((s, idx) => {
+        const div = document.createElement('div');
+        div.className = 'form-group';
+        div.innerHTML = `
+          <label class="form-label">Stat #${idx + 1}</label>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" class="form-input teach-stat-val" data-idx="${idx}" value="${s.value || ''}" style="width: 100px;" placeholder="55%+">
+            <input type="text" class="form-input teach-stat-lbl" data-idx="${idx}" value="${s.label || ''}" placeholder="hold Masters degree">
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    // Dynamic Renderers: Teachers Roster
+    function renderTeachersList(list) {
+      const container = document.getElementById('teachers-list-container');
+      container.innerHTML = '';
+      list.forEach((t, idx) => {
+        const div = document.createElement('div');
+        div.className = 'item-card';
+        div.innerHTML = `
+          <div class="item-header">
+            <span class="item-number">Teacher #${idx + 1}: ${t.name || 'Unnamed'}</span>
+            <button class="btn btn-danger btn-xs" onclick="deleteTeacher(${idx})">Remove Teacher</button>
+          </div>
+          <div class="form-grid-2">
+            <div>
+              <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-input teach-name-input" data-idx="${idx}" value="${t.name || ''}">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Specialization / Role</label>
+                <input type="text" class="form-input teach-role-input" data-idx="${idx}" value="${t.role || ''}">
+              </div>
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label class="form-label">Timezone</label>
+                  <input type="text" class="form-input teach-tz-input" data-idx="${idx}" value="${t.timezone || 'CAT'}">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Region Filter</label>
+                  <select class="form-select teach-reg-input" data-idx="${idx}">
+                    <option value="Americas" ${t.region === 'Americas' ? 'selected' : ''}>Americas</option>
+                    <option value="Europe" ${t.region === 'Europe' ? 'selected' : ''}>Europe</option>
+                    <option value="Asia and Middle East" ${t.region === 'Asia and Middle East' ? 'selected' : ''}>Asia and Middle East</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Bio / Experience</label>
+                <textarea class="form-textarea teach-exp-input" data-idx="${idx}">${t.experience || ''}</textarea>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Teacher Portrait Photo</label>
+              <div class="asset-picker-box" style="flex-direction: column; align-items: center; justify-content: center;">
+                <img id="teach-thumb-${idx}" src="${t.photo || ''}" style="width: 130px; height: 160px; object-fit: cover; border-radius: 12px; border: 1px solid var(--border-color);">
+                <input type="text" id="teach-img-${idx}" class="form-input" style="font-size: 11px; margin-top: 8px;" value="${t.photo || ''}">
+                <div class="asset-btn-row" style="margin-top: 8px;">
+                  <button class="btn btn-secondary btn-xs" onclick="triggerUpload('teach-img-${idx}', 'teach-thumb-${idx}')">Upload Photo</button>
+                  <button class="btn btn-secondary btn-xs" onclick="openMediaPicker('teach-img-${idx}', 'teach-thumb-${idx}', 'Teachers')">Pick Teacher Photo</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function addNewTeacher() {
+      if (!cmsData.teachers) cmsData.teachers = { teachersList: [] };
+      if (!cmsData.teachers.teachersList) cmsData.teachers.teachersList = [];
+      cmsData.teachers.teachersList.unshift({
+        id: Date.now(),
+        name: 'New Educator',
+        role: 'Primary Teacher',
+        timezone: 'CAT',
+        region: 'Americas',
+        experience: 'Dedicated educator passionate about child-centered learning.',
+        photo: '/images/teachers/teachers/abby-riley.webp'
+      });
+      renderTeachersList(cmsData.teachers.teachersList);
+      showToast('New teacher added to roster!', 'success');
+    }
+
+    function deleteTeacher(idx) {
+      if (confirm('Remove this teacher from the public roster?')) {
+        cmsData.teachers.teachersList.splice(idx, 1);
+        renderTeachersList(cmsData.teachers.teachersList);
+        showToast('Teacher removed', 'success');
+      }
+    }
+
+    // Dynamic Renderers: Donation Pillars
+    function renderDonationPillars(pillars) {
+      const container = document.getElementById('donations-pillars-container');
+      container.innerHTML = '';
+      pillars.forEach((p, idx) => {
+        const div = document.createElement('div');
+        div.className = 'item-card';
+        div.innerHTML = `
+          <div class="item-header">
+            <span class="item-number">Pillar #${idx + 1}</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Pillar Title</label>
+            <input type="text" class="form-input pillar-title-input" data-idx="${idx}" value="${p.title || ''}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea class="form-textarea pillar-desc-input" data-idx="${idx}">${p.description || ''}</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Pillar Illustration</label>
+            <div class="asset-picker-box">
+              <img id="pillar-thumb-${idx}" src="${p.image || ''}" class="asset-thumb contain">
+              <div class="asset-picker-controls">
+                <input type="text" id="pillar-img-${idx}" class="form-input" style="font-size: 11px;" value="${p.image || ''}">
+                <div class="asset-btn-row">
+                  <button class="btn btn-secondary btn-xs" onclick="triggerUpload('pillar-img-${idx}', 'pillar-thumb-${idx}')">Upload</button>
+                  <button class="btn btn-secondary btn-xs" onclick="openMediaPicker('pillar-img-${idx}', 'pillar-thumb-${idx}')">Library</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    // Save All Changes
+    document.getElementById('btn-save-all').addEventListener('click', saveAllChanges);
+
+    async function saveAllChanges() {
+      const saveBtn = document.getElementById('btn-save-all');
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = '<span>Saving...</span>';
+
+      try {
+        // Collect form data back into cmsData object
+        // 1. Branding
+        cmsData.branding.schoolName = getVal('branding-schoolName');
+        cmsData.branding.tagline = getVal('branding-tagline');
+        cmsData.branding.logoUrl = getVal('branding-logoUrl');
+        cmsData.branding.logoCardUrl = getVal('branding-logoCardUrl');
+        cmsData.branding.faviconUrl = getVal('branding-faviconUrl');
+        cmsData.branding.momoNumber = getVal('branding-momoNumber');
+        cmsData.branding.momoAccountName = getVal('branding-momoAccountName');
+        cmsData.branding.contactEmail = getVal('branding-contactEmail');
+        cmsData.branding.contactPhone = getVal('branding-contactPhone');
+        cmsData.branding.ctaButtonText = getVal('branding-ctaText');
+        cmsData.branding.ctaButtonLink = getVal('branding-ctaLink');
+
+        // 2. Home Page
+        if (!cmsData.home) cmsData.home = {};
+        if (!cmsData.home.hero) cmsData.home.hero = {};
+        cmsData.home.hero.badge = getVal('home-hero-badge');
+        cmsData.home.hero.title = getVal('home-hero-title');
+        cmsData.home.hero.subtitle = getVal('home-hero-subtitle');
+        cmsData.home.hero.bgImage = getVal('home-hero-bgImage');
+        cmsData.home.hero.ctaText = getVal('home-hero-ctaText');
+        cmsData.home.hero.ctaLink = getVal('home-hero-ctaLink');
+
+        // For You Cards
+        if (cmsData.home.thisIsForYou && cmsData.home.thisIsForYou.cards) {
+          document.querySelectorAll('.foryou-title-input').forEach(inp => {
+            const idx = parseInt(inp.dataset.idx);
+            if (cmsData.home.thisIsForYou.cards[idx]) {
+              cmsData.home.thisIsForYou.cards[idx].title = inp.value;
+              const imgVal = document.getElementById(`foryou-img-${idx}`)?.value;
+              if (imgVal) cmsData.home.thisIsForYou.cards[idx].image = imgVal;
+            }
+          });
+        }
+
+        // Education Features
+        if (cmsData.home.education && cmsData.home.education.cards) {
+          cmsData.home.education.title = getVal('home-education-title');
+          document.querySelectorAll('.edu-title-input').forEach(inp => {
+            const idx = parseInt(inp.dataset.idx);
+            if (cmsData.home.education.cards[idx]) {
+              cmsData.home.education.cards[idx].title = inp.value;
+              cmsData.home.education.cards[idx].description = document.querySelector(`.edu-desc-input[data-idx="${idx}"]`)?.value;
+              const imgVal = document.getElementById(`edu-img-${idx}`)?.value;
+              if (imgVal) cmsData.home.education.cards[idx].image = imgVal;
+            }
+          });
+        }
+
+        // Free Banner
+        if (!cmsData.home.freeSchoolBanner) cmsData.home.freeSchoolBanner = {};
+        cmsData.home.freeSchoolBanner.title = getVal('home-free-title');
+        cmsData.home.freeSchoolBanner.description = getVal('home-free-desc');
+
+        // 3. Programs
+        if (!cmsData.programs) cmsData.programs = {};
+        if (!cmsData.programs.hero) cmsData.programs.hero = {};
+        cmsData.programs.hero.title = getVal('prog-hero-title');
+        cmsData.programs.hero.subtitle = getVal('prog-hero-sub');
+
+        if (cmsData.programs.list) {
+          document.querySelectorAll('.prog-title-input').forEach(inp => {
+            const idx = parseInt(inp.dataset.idx);
+            if (cmsData.programs.list[idx]) {
+              cmsData.programs.list[idx].title = inp.value;
+              cmsData.programs.list[idx].badge = document.querySelector(`.prog-badge-input[data-idx="${idx}"]`)?.value;
+              cmsData.programs.list[idx].description = document.querySelector(`.prog-desc-input[data-idx="${idx}"]`)?.value;
+              const imgVal = document.getElementById(`prog-img-${idx}`)?.value;
+              if (imgVal) cmsData.programs.list[idx].image = imgVal;
+            }
+          });
+        }
+
+        // 4. Teachers
+        if (!cmsData.teachers) cmsData.teachers = {};
+        if (!cmsData.teachers.hero) cmsData.teachers.hero = {};
+        cmsData.teachers.hero.title = getVal('teach-hero-title');
+        cmsData.teachers.hero.subtitle = getVal('teach-hero-sub');
+
+        // Stats
+        if (cmsData.teachers.stats) {
+          document.querySelectorAll('.teach-stat-val').forEach(inp => {
+            const idx = parseInt(inp.dataset.idx);
+            if (cmsData.teachers.stats[idx]) {
+              cmsData.teachers.stats[idx].value = inp.value;
+              cmsData.teachers.stats[idx].label = document.querySelector(`.teach-stat-lbl[data-idx="${idx}"]`)?.value;
+            }
+          });
+        }
+
+        // Teachers List
+        if (cmsData.teachers.teachersList) {
+          document.querySelectorAll('.teach-name-input').forEach(inp => {
+            const idx = parseInt(inp.dataset.idx);
+            if (cmsData.teachers.teachersList[idx]) {
+              cmsData.teachers.teachersList[idx].name = inp.value;
+              cmsData.teachers.teachersList[idx].role = document.querySelector(`.teach-role-input[data-idx="${idx}"]`)?.value;
+              cmsData.teachers.teachersList[idx].timezone = document.querySelector(`.teach-tz-input[data-idx="${idx}"]`)?.value;
+              cmsData.teachers.teachersList[idx].region = document.querySelector(`.teach-reg-input[data-idx="${idx}"]`)?.value;
+              cmsData.teachers.teachersList[idx].experience = document.querySelector(`.teach-exp-input[data-idx="${idx}"]`)?.value;
+              const imgVal = document.getElementById(`teach-img-${idx}`)?.value;
+              if (imgVal) cmsData.teachers.teachersList[idx].photo = imgVal;
+            }
+          });
+        }
+
+        // 5. Donations
+        if (!cmsData.donations) cmsData.donations = {};
+        if (!cmsData.donations.momo) cmsData.donations.momo = {};
+        cmsData.donations.momo.number = getVal('donations-momo-number');
+        cmsData.donations.momo.merchantName = getVal('donations-momo-merchant');
+        cmsData.donations.momo.instructions = getVal('donations-momo-instructions');
+
+        if (!cmsData.donations.hero) cmsData.donations.hero = {};
+        cmsData.donations.hero.title = getVal('donations-hero-title');
+        cmsData.donations.hero.subtitle = getVal('donations-hero-sub');
+
+        // Pillars
+        if (cmsData.donations.whatEveryChildReceives) {
+          document.querySelectorAll('.pillar-title-input').forEach(inp => {
+            const idx = parseInt(inp.dataset.idx);
+            if (cmsData.donations.whatEveryChildReceives[idx]) {
+              cmsData.donations.whatEveryChildReceives[idx].title = inp.value;
+              cmsData.donations.whatEveryChildReceives[idx].description = document.querySelector(`.pillar-desc-input[data-idx="${idx}"]`)?.value;
+              const imgVal = document.getElementById(`pillar-img-${idx}`)?.value;
+              if (imgVal) cmsData.donations.whatEveryChildReceives[idx].image = imgVal;
+            }
+          });
+        }
+
+        // 6. About
+        if (!cmsData.about) cmsData.about = {};
+        if (!cmsData.about.hero) cmsData.about.hero = {};
+        cmsData.about.hero.title = getVal('about-story-title');
+        cmsData.about.story = [getVal('about-story-p1'), getVal('about-story-p2')];
+        if (!cmsData.about.founder) cmsData.about.founder = {};
+        cmsData.about.founder.name = getVal('about-founder-name');
+        cmsData.about.founder.role = getVal('about-founder-role');
+        cmsData.about.founder.bio = getVal('about-founder-bio');
+        cmsData.about.founder.photo = getVal('about-founder-photo');
+
+        // 7. Contact
+        if (!cmsData.contact) cmsData.contact = {};
+        if (!cmsData.contact.hero) cmsData.contact.hero = {};
+        cmsData.contact.hero.title = getVal('contact-hero-title');
+        cmsData.contact.hero.subtitle = getVal('contact-hero-sub');
+        cmsData.contact.address = getVal('contact-address');
+        cmsData.contact.phone = getVal('contact-phone');
+        cmsData.contact.email = getVal('contact-email');
+        cmsData.contact.hours = getVal('contact-hours');
+
+        // Send POST to server
+        const res = await fetch('/api/cms-data', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(cmsData)
+        });
+
+        if (res.ok) {
+          showToast('All website changes saved and live!', 'success');
+          populateFormFields();
+        } else {
+          showToast('Failed to save changes.', 'error');
+        }
+      } catch (err) {
+        showToast('Error saving data: ' + err.message, 'error');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg><span>Save All Changes</span>';
+      }
+    }
+
+    // Keyboard shortcut (Ctrl+S / Cmd+S)
+    function setupSaveShortcut() {
+      document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+          e.preventDefault();
+          saveAllChanges();
+        }
+      });
+    }
+
+    // Upload & Asset Picker Engine
+    function triggerUpload(inputId, previewId) {
+      targetInputForPicker = inputId;
+      targetPreviewForPicker = previewId;
+      const fileInp = document.getElementById('generic-file-input');
+      fileInp.value = '';
+      fileInp.onchange = handleFileUpload;
+      fileInp.click();
+    }
+
+    function triggerGeneralUpload() {
+      targetInputForPicker = null;
+      targetPreviewForPicker = null;
+      const fileInp = document.getElementById('generic-file-input');
+      fileInp.value = '';
+      fileInp.onchange = handleFileUpload;
+      fileInp.click();
+    }
+
+    async function handleFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async function() {
+        const base64Data = reader.result;
+        showToast('Uploading asset...', 'success');
+
+        try {
+          const res = await fetch('/api/assets/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              filename: file.name,
+              base64Data: base64Data
+            })
+          });
+
+          const result = await res.json();
+          if (res.ok && result.success) {
+            showToast('Asset uploaded successfully!', 'success');
+
+            if (targetInputForPicker) {
+              const inp = document.getElementById(targetInputForPicker);
+              if (inp) {
+                inp.value = result.url;
+                inp.dispatchEvent(new Event('input'));
+              }
+            }
+            if (targetPreviewForPicker) {
+              const prev = document.getElementById(targetPreviewForPicker);
+              if (prev) prev.src = result.url;
+            }
+
+            // Reload media gallery
+            loadMediaAssets();
+          } else {
+            showToast(result.error || 'Upload failed', 'error');
+          }
+        } catch (err) {
+          showToast('Upload error: ' + err.message, 'error');
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // In-Place Asset Replacer Modal
+    function openReplaceModal(assetPath) {
+      currentReplaceTarget = assetPath;
+      document.getElementById('replace-target-path').textContent = assetPath;
+      document.getElementById('replace-file-input').value = '';
+      document.getElementById('replace-preview-wrap').style.display = 'none';
+      document.getElementById('modal-replace-asset').classList.add('open');
+
+      document.getElementById('replace-file-input').onchange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const r = new FileReader();
+          r.onload = () => {
+            document.getElementById('replace-preview-img').src = r.result;
+            document.getElementById('replace-preview-wrap').style.display = 'block';
+          };
+          r.readAsDataURL(file);
+        }
+      };
+    }
+
+    function closeReplaceModal() {
+      document.getElementById('modal-replace-asset').classList.remove('open');
+    }
+
+    async function submitAssetReplace() {
+      const fileInp = document.getElementById('replace-file-input');
+      const file = fileInp.files[0];
+      if (!file) {
+        alert('Please choose a file to replace the asset with');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const btn = document.getElementById('btn-confirm-replace');
+        btn.disabled = true;
+        btn.textContent = 'Replacing on server...';
+
+        try {
+          const res = await fetch('/api/assets/replace', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              targetPath: currentReplaceTarget,
+              base64Data: reader.result
+            })
+          });
+
+          const result = await res.json();
+          if (res.ok && result.success) {
+            showToast('Asset replaced in place! Live site updated.', 'success');
+            closeReplaceModal();
+            loadMediaAssets();
+            loadCmsData();
+          } else {
+            showToast(result.error || 'Replacement failed', 'error');
+          }
+        } catch (err) {
+          showToast('Error: ' + err.message, 'error');
+        } finally {
+          btn.disabled = false;
+          btn.textContent = 'Confirm & Replace Asset';
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Media Manager: Load & Filter Assets
+    async function loadMediaAssets() {
+      try {
+        const params = new URLSearchParams({
+          category: activeMediaCategory,
+          search: mediaSearchQuery,
+          page: currentMediaPage,
+          pageSize: 40
+        });
+
+        const res = await fetch(`/api/assets/list?${params}`);
+        const data = await res.json();
+
+        renderMediaGrid(data.items || []);
+        document.getElementById('stat-total-assets').textContent = data.total?.toLocaleString() || '1,700+';
+        document.getElementById('media-page-info').textContent = `Page ${data.page} of ${data.totalPages || 1}`;
+        document.getElementById('media-prev-page').disabled = data.page <= 1;
+        document.getElementById('media-next-page').disabled = data.page >= data.totalPages;
+      } catch (err) {
+        console.error('Error loading media:', err);
+      }
+    }
+
+    function renderMediaGrid(items) {
+      const grid = document.getElementById('media-grid-container');
+      grid.innerHTML = '';
+
+      if (items.length === 0) {
+        grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-dim);">No assets found matching criteria.</div>';
+        return;
+      }
+
+      items.forEach(asset => {
+        const card = document.createElement('div');
+        card.className = 'media-card';
+        card.innerHTML = `
+          <div class="media-card-img-wrap" onclick="previewImage('${asset.path}')">
+            <img src="${asset.path}" loading="lazy" class="media-card-img" alt="${asset.name}">
+          </div>
+          <div class="media-card-body">
+            <div class="media-card-name" title="${asset.name}">${asset.name}</div>
+            <div class="media-card-meta">
+              <span>${asset.category}</span>
+              <span>${asset.size}</span>
+            </div>
+          </div>
+          <div class="media-card-actions">
+            <button class="btn btn-secondary btn-xs" style="flex:1;" onclick="openReplaceModal('${asset.path}')" title="Replace this asset directly on disk">Replace</button>
+            <button class="btn btn-secondary btn-xs" onclick="copyAssetUrl('${asset.path}')" title="Copy URL">Copy</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function setMediaFilter(category, btn) {
+      activeMediaCategory = category;
+      currentMediaPage = 1;
+      document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      loadMediaAssets();
+    }
+
+    let searchDebounce;
+    function handleMediaSearch() {
+      clearTimeout(searchDebounce);
+      searchDebounce = setTimeout(() => {
+        mediaSearchQuery = document.getElementById('media-search').value.trim();
+        currentMediaPage = 1;
+        loadMediaAssets();
+      }, 300);
+    }
+
+    function changeMediaPage(delta) {
+      currentMediaPage += delta;
+      if (currentMediaPage < 1) currentMediaPage = 1;
+      loadMediaAssets();
+    }
+
+    function copyAssetUrl(url) {
+      navigator.clipboard.writeText(url).then(() => {
+        showToast('Asset URL copied to clipboard: ' + url, 'success');
+      });
+    }
+
+    function previewImage(url) {
+      window.open(url, '_blank');
+    }
+
+    // Media Library Picker Modal
+    let modalPickerTargetInput = null;
+    let modalPickerTargetPreview = null;
+    let modalPickerCategory = 'all';
+
+    async function openMediaPicker(inputId, previewId, category = 'all') {
+      modalPickerTargetInput = inputId;
+      modalPickerTargetPreview = previewId;
+      modalPickerCategory = category;
+      document.getElementById('modal-media-picker').classList.add('open');
+      loadModalMediaAssets();
+    }
+
+    function closeMediaPicker() {
+      document.getElementById('modal-media-picker').classList.remove('open');
+    }
+
+    async function loadModalMediaAssets() {
+      const q = document.getElementById('modal-media-search').value.trim();
+      const params = new URLSearchParams({
+        category: modalPickerCategory,
+        search: q,
+        page: 1,
+        pageSize: 60
+      });
+      const res = await fetch(`/api/assets/list?${params}`);
+      const data = await res.json();
+      const grid = document.getElementById('modal-media-grid');
+      grid.innerHTML = '';
+
+      (data.items || []).forEach(asset => {
+        const item = document.createElement('div');
+        item.className = 'media-card';
+        item.style.cursor = 'pointer';
+        item.innerHTML = `
+          <div class="media-card-img-wrap" style="height: 90px;">
+            <img src="${asset.path}" loading="lazy" class="media-card-img">
+          </div>
+          <div style="padding: 6px 8px; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            ${asset.name}
+          </div>
+        `;
+        item.onclick = () => {
+          if (modalPickerTargetInput) {
+            const inp = document.getElementById(modalPickerTargetInput);
+            if (inp) {
+              inp.value = asset.path;
+              inp.dispatchEvent(new Event('input'));
+            }
+          }
+          if (modalPickerTargetPreview) {
+            const prev = document.getElementById(modalPickerTargetPreview);
+            if (prev) prev.src = asset.path;
+          }
+          closeMediaPicker();
+          showToast(`Selected: ${asset.name}`, 'success');
+        };
+        grid.appendChild(item);
+      });
+    }
+
+    function handleModalSearch() {
+      clearTimeout(searchDebounce);
+      searchDebounce = setTimeout(() => {
+        loadModalMediaAssets();
+      }, 300);
+    }
+
+    // Tabs Switching
+    function setupTabs() {
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const tabId = item.dataset.tab;
+          if (tabId) switchTab(tabId);
+        });
+      });
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+
+      const navEl = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
+      if (navEl) navEl.classList.add('active');
+
+      const paneEl = document.getElementById(tabId);
+      if (paneEl) paneEl.classList.add('active');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Password Update Form
+    function setupPasswordForm() {
+      const form = document.getElementById('form-change-pwd');
+      if (!form) return;
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const oldPassword = document.getElementById('pwd-old').value;
+        const newPassword = document.getElementById('pwd-new').value;
+        const confirmPassword = document.getElementById('pwd-confirm').value;
+
+        if (newPassword !== confirmPassword) {
+          showToast('New passwords do not match', 'error');
+          return;
+        }
+
+        try {
+          const res = await fetch('/api/admin/change-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ oldPassword, newPassword })
+          });
+          const result = await res.json();
+          if (res.ok && result.success) {
+            showToast('Password updated successfully!', 'success');
+            form.reset();
+          } else {
+            showToast(result.error || 'Failed to change password', 'error');
+          }
+        } catch (err) {
+          showToast('Error: ' + err.message, 'error');
+        }
+      });
+    }
+
+    // Backup & Restore
+    function exportBackup() {
+      const blob = new Blob([JSON.stringify(cmsData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `risevana_backup_${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Backup file downloaded', 'success');
+    }
+
+    async function restoreDefaults() {
+      if (!confirm('Are you sure you want to restore factory default content? This will reset all customizations.')) {
+        return;
+      }
+      try {
+        const res = await fetch('/api/cms/reset', { method: 'POST' });
+        if (res.ok) {
+          showToast('Factory defaults restored!', 'success');
+          await loadCmsData();
+        } else {
+          showToast('Failed to reset defaults', 'error');
+        }
+      } catch (err) {
+        showToast('Reset error: ' + err.message, 'error');
+      }
+    }
+
+    // Toast Alert Helper
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `
+        <span>${type === 'success' ? '✓' : '⚠️'}</span>
+        <span>${message}</span>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'all 0.25s ease';
+        setTimeout(() => toast.remove(), 250);
+      }, 3500);
+    }
+  </script>
+</body>
+</html>

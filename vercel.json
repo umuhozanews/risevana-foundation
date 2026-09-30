@@ -7,9 +7,21 @@
     { "source": "/fonts/(.*)", "destination": "/public/fonts/$1" },
     { "source": "/images/(.*)", "destination": "/public/images/$1" },
     { "source": "/videos/(.*)", "destination": "/public/videos/$1" },
+    { "source": "/uploads/(.*)", "destination": "/public/uploads/$1" },
     { "source": "/app.js", "destination": "/public/app.js" },
+    { "source": "/cms-client.js", "destination": "/public/cms-client.js" },
+    { "source": "/admin", "destination": "/public/admin/index.html" },
+    { "source": "/admin/login", "destination": "/public/admin/login.html" },
     { "source": "/programs", "destination": "/programs.html" },
     { "source": "/contact", "destination": "/contact.html" },
-    { "source": "/donations", "destination": "/donations.html" }
+    { "source": "/donations", "destination": "/donations.html" },
+    { "source": "/teachers", "destination": "/teachers.html" },
+    { "source": "/primary-school", "destination": "/primary-school.html" },
+    { "source": "/middle-school", "destination": "/middle-school.html" },
+    { "source": "/about", "destination": "/about.html" },
+    { "source": "/admissions", "destination": "/admissions.html" },
+    { "source": "/tuition", "destination": "/tuition.html" },
+    { "source": "/open-house", "destination": "/open-house.html" },
+    { "source": "/api/(.*)", "destination": "/api/index.js" }
   ]
 }

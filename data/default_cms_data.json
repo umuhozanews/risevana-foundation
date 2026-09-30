@@ -1,0 +1,442 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2026-09-30T13:26:07.810Z",
+  "branding": {
+    "schoolName": "Risevana Foundation",
+    "tagline": "Empowering Young Rural Minds in Rwanda",
+    "logoUrl": "/images/landing/logos/risevana-navbar-logo.svg",
+    "logoCardUrl": "/images/risevana/logo_card.png",
+    "faviconUrl": "/images/favicon.png?v=risevana",
+    "contactEmail": "nextech@gmail.com",
+    "contactPhone": "+250 788 749 709",
+    "momoNumber": "250788749709",
+    "momoAccountName": "Risevana Foundation",
+    "address": "Kigali & Rural Provinces, Rwanda",
+    "ctaButtonText": "Start your risevana journey",
+    "ctaButtonLink": "/contact",
+    "socialLinks": {
+      "linkedin": "https://www.linkedin.com/company/thebinaschool",
+      "youtube": "https://www.youtube.com/@thebinaschool",
+      "tiktok": "https://www.tiktok.com/@risevana.school",
+      "instagram": "https://www.instagram.com/thebinaschool"
+    }
+  },
+  "home": {
+    "hero": {
+      "badge": "Online & Community School for Ages 4 to 15",
+      "title": "risevana",
+      "subtitle": "Risevana Foundation empowers young rural minds across Rwanda with early childhood education, daily nutrition, and digital learning outreach.",
+      "bgImage": "/images/landing/heroes/risevana-ecd-3.jpeg",
+      "ctaText": "Start your risevana journey",
+      "ctaLink": "/contact",
+      "secondaryCtaText": "Donate via MoMo",
+      "secondaryCtaLink": "/donations"
+    },
+    "accreditations": {
+      "title": "Recognised accreditations and partners that keep doors open",
+      "subtitle": "Partnering with national education boards and rural community leaders",
+      "logos": [
+        {
+          "name": "REB",
+          "src": "/images/landing/logos/reb.png"
+        },
+        {
+          "name": "NESA",
+          "src": "/images/landing/logos/nesa.png"
+        },
+        {
+          "name": "MINEDUC",
+          "src": "/images/landing/logos/mineduc.png"
+        },
+        {
+          "name": "ADEPR",
+          "src": "/images/landing/logos/adepr.png"
+        }
+      ]
+    },
+    "thisIsForYou": {
+      "title": "This is for you if...",
+      "cards": [
+        {
+          "id": 1,
+          "title": "You want your child to love learning",
+          "image": "/images/landing/lovepoint-card-1.png",
+          "color": "#03ecc5"
+        },
+        {
+          "id": 2,
+          "title": "You want education that fits rural realities",
+          "image": "/images/landing/lovepoint-card-2.png",
+          "color": "#fcde2d"
+        },
+        {
+          "id": 3,
+          "title": "You believe small classes build confidence",
+          "image": "/images/landing/lovepoint-card-3.png",
+          "color": "#b38cff"
+        },
+        {
+          "id": 4,
+          "title": "You want teachers who truly know each child",
+          "image": "/images/landing/lovepoint-card-4.png",
+          "color": "#fd4fc1"
+        }
+      ]
+    },
+    "education": {
+      "title": "Transforming rural education, one child at a time.",
+      "cards": [
+        {
+          "title": "Tiny classes of 6. Real connection.",
+          "description": "Every child is heard, guided, and championed with individual care.",
+          "image": "/images/education/features/tiny-classes.png"
+        },
+        {
+          "title": "Daily learning, wherever you are.",
+          "description": "Bringing high standard education to villages and remote communities.",
+          "image": "/images/education/features/everyday-live.png"
+        },
+        {
+          "title": "Curriculum built for curious minds.",
+          "description": "Inspiring exploration, creative thinking, and problem solving skills.",
+          "image": "/images/education/features/curriculum.png"
+        },
+        {
+          "title": "Beyond textbooks. Hands-on discovery.",
+          "description": "Interactive projects, practical science, and joyful art every single day.",
+          "image": "/images/education/features/beyond-textbook.png"
+        }
+      ]
+    },
+    "freeSchoolBanner": {
+      "title": "Our School is 100% Free",
+      "description": "Zero tuition, zero hidden fees. Thanks to generous global donors and Mobile Money contributors, every rural learner attends without financial barrier.",
+      "ctaText": "Support a Student",
+      "ctaLink": "/donations"
+    },
+    "communityImpact": {
+      "title": "Help us turn one classroom into a school",
+      "description": "Reaching over 1,200 rural children across Rwanda. Every donation provides nutritious daily meals, books, and trained teachers.",
+      "stats": [
+        {
+          "number": "1,200+",
+          "label": "Children Reached"
+        },
+        {
+          "number": "100%",
+          "label": "Free Tuition"
+        },
+        {
+          "number": "18+",
+          "label": "Rural Classrooms"
+        },
+        {
+          "number": "25k+",
+          "label": "Hot Meals Served"
+        }
+      ]
+    }
+  },
+  "programs": {
+    "hero": {
+      "title": "Our Educational Programs",
+      "subtitle": "Physical Early Childhood Development & Mobile Classrooms across Rwanda",
+      "badge": "Holistic Rural Education"
+    },
+    "sectionTitle": "Our Core Programs: Physical & Mobile",
+    "list": [
+      {
+        "id": "ecd-nursery",
+        "title": "Early Childhood Development (ECD)",
+        "badge": "Ages 3 - 6",
+        "description": "Early childhood learning with play-based literacy, numeracy, social skills, and creative expression in nurturing environments.",
+        "image": "/images/risevana/risevana_ecd_1.jpeg",
+        "highlights": [
+          "Foundational English & Kinyarwanda",
+          "Play-based sensory discovery",
+          "Daily health & growth checkups"
+        ]
+      },
+      {
+        "id": "mobile-classroom",
+        "title": "Mobile Digital Literacy Outreach",
+        "badge": "Ages 7 - 15",
+        "description": "Equipped with solar-powered laptops, mobile projectors, and interactive educational software traveling to remote villages.",
+        "image": "/images/risevana/mobile_classroom_1.jpg",
+        "highlights": [
+          "Solar-powered digital workstations",
+          "Coding & computer basics",
+          "Offline educational encyclopedias"
+        ]
+      },
+      {
+        "id": "nutrition-health",
+        "title": "Daily Nutrition & Wellness Program",
+        "badge": "All Students",
+        "description": "Hungry children cannot learn. We provide clean drinking water, hot nutrient-dense porridge, and balanced lunches daily.",
+        "image": "/images/risevana/risevana_ecd_3.jpeg",
+        "highlights": [
+          "Daily fortified hot porridge",
+          "Clean potable drinking water",
+          "Zero malnutrition guarantee"
+        ]
+      },
+      {
+        "id": "teacher-training",
+        "title": "Community Teacher Empowerment",
+        "badge": "Educators",
+        "description": "Empowering rural teachers with modern pedagogical tools, classroom management techniques, and continuous professional support.",
+        "image": "/images/risevana/event_ecd_10.jpg",
+        "highlights": [
+          "Monthly pedagogy workshops",
+          "Montessori & hands-on toolkits",
+          "Peer teaching circles"
+        ]
+      }
+    ]
+  },
+  "teachers": {
+    "hero": {
+      "title": "The teachers your child will talk about for years.",
+      "subtitle": "Experienced, globally-minded, and genuinely invested. Over 55% hold a Masters degree. From 16 countries."
+    },
+    "stats": [
+      {
+        "value": "55%+",
+        "label": "hold a Masters degree or higher"
+      },
+      {
+        "value": "500+",
+        "label": "years of collective teaching experience"
+      },
+      {
+        "value": "16",
+        "label": "nationalities on the teaching team"
+      },
+      {
+        "value": "96%",
+        "label": "teacher retention year on year"
+      }
+    ],
+    "whatMakesDifferent": [
+      {
+        "tag": "THEY KNOW YOUR CHILD.",
+        "text": "With an average student to teacher ratio of 6.3, risevana teachers have the time and space to genuinely know every learner."
+      },
+      {
+        "tag": "THEY CELEBRATE THE SMALL WINS.",
+        "text": "They remember your child is working on being braver about sharing ideas. They sit with the big questions."
+      },
+      {
+        "tag": "THEY COME FROM EVERYWHERE.",
+        "text": "16 nationalities, taught in big cities, small villages, international schools and camps."
+      },
+      {
+        "tag": "THEY KEEP GETTING BETTER.",
+        "text": "18 days of professional development every year. Weekly peer reviews. Continuous feedback."
+      }
+    ],
+    "teachersList": [
+      {
+        "id": 1,
+        "name": "Abby Riley",
+        "role": "Special Educator & Coach",
+        "timezone": "ET",
+        "experience": "Dedicated special educator and ADHD coach with 10+yrs of experience",
+        "photo": "/images/teachers/teachers/abby-riley.webp",
+        "region": "Americas"
+      },
+      {
+        "id": 2,
+        "name": "Alva Glynn",
+        "role": "Primary Educator",
+        "timezone": "CET",
+        "experience": "12yrs of teaching experience in Scotland and Bahrain.",
+        "photo": "/images/teachers/teachers/alva-glynn.jpeg",
+        "region": "Europe"
+      },
+      {
+        "id": 3,
+        "name": "Andrea Valverde",
+        "role": "Preschool Specialist",
+        "timezone": "PT",
+        "experience": "5 yrs of teaching experience in Preschool and Elementary",
+        "photo": "/images/teachers/teachers/andrea-valverde.jpg",
+        "region": "Americas"
+      },
+      {
+        "id": 4,
+        "name": "April Leite",
+        "role": "ECE & MS Specialist",
+        "timezone": "ET",
+        "experience": "20+ years teaching experience including ECE, TEFL, and MS",
+        "photo": "/images/teachers/teachers/april-leite.png",
+        "region": "Americas"
+      },
+      {
+        "id": 5,
+        "name": "Belle DeMont",
+        "role": "Visual Learning Specialist",
+        "timezone": "ET",
+        "experience": "Educator, Illustrator and designer with 5+ years of teaching experience",
+        "photo": "/images/teachers/teachers/belle-demont.webp",
+        "region": "Americas"
+      },
+      {
+        "id": 6,
+        "name": "Brittany Bartak",
+        "role": "Literacy & Phonics Specialist",
+        "timezone": "CET",
+        "experience": "10+yrs of teaching in the US, Kosovo and the UK",
+        "photo": "/images/teachers/teachers/brittany-bartak.webp",
+        "region": "Europe"
+      },
+      {
+        "id": 7,
+        "name": "Casey Hurst",
+        "role": "Math Instructional Coach",
+        "timezone": "ET",
+        "experience": "15+yrs of experience as teacher, reading interventionist & Math coach",
+        "photo": "/images/teachers/teachers/casey-hurst.webp",
+        "region": "Americas"
+      },
+      {
+        "id": 8,
+        "name": "Cathy de Coster",
+        "role": "International Educator",
+        "timezone": "CET",
+        "experience": "28yrs of teaching experience across Spain, Madagascar, Turkey & Macedonia",
+        "photo": "/images/teachers/teachers/cathy-de-coster.webp",
+        "region": "Europe"
+      },
+      {
+        "id": 9,
+        "name": "Cathy Ramirez",
+        "role": "Secondary Educator",
+        "timezone": "APAC",
+        "experience": "8+ years teaching in secondary school with international curriculum",
+        "photo": "/images/teachers/teachers/cathy-ramirez.jpg",
+        "region": "Asia and Middle East"
+      },
+      {
+        "id": 10,
+        "name": "Charlotte Adelakun",
+        "role": "Lower Elementary",
+        "timezone": "CET",
+        "experience": "9yrs of teaching experience in preschool and lower elementary education",
+        "photo": "/images/teachers/teachers/charlotte-adelakun.webp",
+        "region": "Europe"
+      },
+      {
+        "id": 11,
+        "name": "Charlotte Parish",
+        "role": "Primary Teacher",
+        "timezone": "CET",
+        "experience": "4+ yrs of primary teaching experience in Belgium, UK, Hungary, Spain & France",
+        "photo": "/images/teachers/teachers/charlotte-parish.webp",
+        "region": "Europe"
+      },
+      {
+        "id": 12,
+        "name": "Danelle van der Linde",
+        "role": "PE & Preschool",
+        "timezone": "CET",
+        "experience": "4yrs of teaching experience in preschool with specialization in PE",
+        "photo": "/images/teachers/teachers/danelle-van-der-linde.webp",
+        "region": "Europe"
+      },
+      {
+        "id": 13,
+        "name": "Dina Bolan",
+        "role": "SEL Curriculum Specialist",
+        "timezone": "ET",
+        "experience": "10+yrs of teaching experience in the US. Expertise in SEL curriculum",
+        "photo": "/images/teachers/teachers/dina-bolan.webp",
+        "region": "Americas"
+      },
+      {
+        "id": 14,
+        "name": "Eleni Kakalianti",
+        "role": "K-2 & ESL Specialist",
+        "timezone": "CET",
+        "experience": "8+ years of experience, specialisation in K-2, ESL learning, and phonics",
+        "photo": "/images/teachers/teachers/eleni-kakalianti.jpg",
+        "region": "Europe"
+      },
+      {
+        "id": 15,
+        "name": "Elishia Naidoo",
+        "role": "International Educator",
+        "timezone": "ET",
+        "experience": "12 years teaching experience across South Africa, Middle East, China",
+        "photo": "/images/teachers/teachers/elishia-naidoo.jpg",
+        "region": "Asia and Middle East"
+      }
+    ]
+  },
+  "donations": {
+    "hero": {
+      "title": "100% Free Education. Zero School Fees.",
+      "subtitle": "Risevana Foundation provides 100% free education, daily hot meals, learning materials, and laptop outreach for rural children in Rwanda."
+    },
+    "momo": {
+      "number": "250788749709",
+      "merchantName": "Risevana Foundation",
+      "instructions": "Direct Mobile Money (MoMo) transfer available. Dial *182*8*1*... or enter phone number 250788749709."
+    },
+    "whatEveryChildReceives": [
+      {
+        "title": "100% Free Tuition & Books",
+        "description": "Zero tuition, no hidden fees, all books and learning supplies provided completely free.",
+        "image": "/images/tuition/features/tuition-learning.png"
+      },
+      {
+        "title": "Daily Nutritious Meals",
+        "description": "Fortified hot meals and clean drinking water to eliminate hunger and fuel learning.",
+        "image": "/images/tuition/features/tuition-support.png"
+      },
+      {
+        "title": "Digital Laptops & Tools",
+        "description": "Hands-on tech learning and mobile computing lab access for rural villages.",
+        "image": "/images/tuition/features/tuition-tools.png"
+      },
+      {
+        "title": "Lifelong Community & Care",
+        "description": "A joyful, supportive space where every rural child feels valued and protected.",
+        "image": "/images/tuition/features/tuition-friendship.png"
+      }
+    ],
+    "impactCallout": {
+      "title": "Help us keep education free for every child",
+      "text": "A gift of $25 feeds a child for two months. $100 covers books and learning materials for an entire classroom."
+    }
+  },
+  "about": {
+    "hero": {
+      "title": "Our Story: Bridging the Divide",
+      "subtitle": "Risevana was founded on a simple truth: no child should have to risk their safety or cross a dangerous river just to attend school."
+    },
+    "story": [
+      "In rural Rwanda, children often walked miles through rugged terrain, sometimes having to navigate swollen rivers during the rainy season to reach basic classrooms. Risevana Foundation was created to bring high quality, joyful education directly into the hearts of rural communities.",
+      "Today, we combine physical community ECD classrooms with innovative solar-powered mobile digital literacy labs, bringing modern education and nutritious meals to over 1,200 young learners."
+    ],
+    "founder": {
+      "name": "Noam",
+      "role": "Founder & Executive Director",
+      "bio": "An educator and advocate committed to bringing transformative education and opportunities to under-resourced rural communities in East Africa.",
+      "photo": "/images/about/founder-noam-portrait.webp"
+    }
+  },
+  "contact": {
+    "hero": {
+      "title": "You're invited",
+      "subtitle": "Connect with our team, plan a visit to our rural learning centers, or discover how you can get involved."
+    },
+    "phone": "+250 788 749 709",
+    "momoPhone": "250788749709",
+    "email": "nextech@gmail.com",
+    "address": "Kigali & Rural Provinces, Rwanda",
+    "hours": "Monday – Friday: 8:00 AM – 5:00 PM CAT"
+  },
+  "assetOverrides": {}
+}
