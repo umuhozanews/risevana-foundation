@@ -294,7 +294,13 @@
    */
   async function checkAdminBadge() {
     try {
-      const res = await fetch('/api/admin/check-auth', { credentials: 'same-origin' });
+      const token = localStorage.getItem('axel_admin_token');
+      const headers = {};
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+      const res = await fetch('/api/admin/check-auth', {
+        headers,
+        credentials: 'include'
+      });
       const auth = await res.json();
       if (auth && auth.authenticated) {
         if (document.getElementById('risevana-admin-floating-pill')) return;
@@ -336,7 +342,20 @@
     } catch (_) {}
   }
 
-  // Execute immediately
+  // Pre-load from localStorage cache if available for instant hydration
+  try {
+    const cachedCms = localStorage.getItem('risevana_cms_data');
+    if (cachedCms) {
+      const parsed = JSON.parse(cachedCms);
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => applyCms(parsed));
+      } else {
+        applyCms(parsed);
+      }
+    }
+  } catch (_) {}
+
+  // Hydrate from window or server
   if (window.__CMS_DATA__) {
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => applyCms(window.__CMS_DATA__));
@@ -348,6 +367,7 @@
       .then(r => r.json())
       .then(d => {
         window.__CMS_DATA__ = d;
+        try { localStorage.setItem('risevana_cms_data', JSON.stringify(d)); } catch (_) {}
         if (document.readyState === 'loading') {
           document.addEventListener('DOMContentLoaded', () => applyCms(d));
         } else {

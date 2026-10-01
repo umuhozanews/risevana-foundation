@@ -369,13 +369,6 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (pathname === '/admin' || pathname === '/admin/' || pathname === '/admin/index.html') {
-    const token = adminAuth.extractToken(req);
-    const session = adminAuth.validateSession(token);
-    if (!session) {
-      res.writeHead(302, { 'Location': '/admin/login' });
-      res.end();
-      return;
-    }
     const adminHtml = path.join(PUBLIC_DIR, 'admin', 'index.html');
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache' });
     fs.createReadStream(adminHtml).pipe(res);

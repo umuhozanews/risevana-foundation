@@ -1441,9 +1441,28 @@
     let targetPreviewForPicker = null;
     let currentReplaceTarget = '';
 
+    // Auth Helper Functions
+    function getAdminToken() {
+      return localStorage.getItem('axel_admin_token') || '';
+    }
+
+    function authFetch(url, options = {}) {
+      const token = getAdminToken();
+      const headers = { ...(options.headers || {}) };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      return fetch(url, {
+        ...options,
+        headers,
+        credentials: 'include'
+      });
+    }
+
     // Initialize Dashboard
     document.addEventListener('DOMContentLoaded', async () => {
-      await checkAuth();
+      const isAuthed = await checkAuth();
+      if (!isAuthed) return;
       await loadCmsData();
       await loadMediaAssets();
       setupTabs();
@@ -1453,39 +1472,77 @@
 
     // Check Authentication
     async function checkAuth() {
+      const token = getAdminToken();
+      if (!token) {
+        window.location.href = '/admin/login';
+        return false;
+      }
+
+      // Quick client-side check of token expiry & email
       try {
-        const res = await fetch('/api/admin/check-auth');
-        const auth = await res.json();
-        if (!auth || !auth.authenticated) {
-          window.location.href = '/admin/login';
-        } else {
-          document.getElementById('admin-user-email').textContent = auth.email || 'nextech@gmail.com';
+        const parts = token.split('.');
+        if (parts.length === 2) {
+          const payload = JSON.parse(atob(parts[0].replace(/-/g, '+').replace(/_/g, '/')));
+          if (payload.exp && payload.exp < Date.now()) {
+            localStorage.removeItem('axel_admin_token');
+            window.location.href = '/admin/login';
+            return false;
+          }
+          if (payload.email) {
+            const emailEl = document.getElementById('admin-user-email');
+            if (emailEl) emailEl.textContent = payload.email;
+          }
+        }
+      } catch (_) {}
+
+      try {
+        const res = await authFetch('/api/admin/check-auth');
+        if (res.ok) {
+          const auth = await res.json();
+          if (!auth || !auth.authenticated) {
+            localStorage.removeItem('axel_admin_token');
+            window.location.href = '/admin/login';
+            return false;
+          } else if (auth.email) {
+            const emailEl = document.getElementById('admin-user-email');
+            if (emailEl) emailEl.textContent = auth.email;
+          }
         }
       } catch (e) {
-        window.location.href = '/admin/login';
+        console.warn('Network check deferred, remaining logged in locally:', e);
       }
+      return true;
     }
 
     // Logout
     document.getElementById('btn-logout').addEventListener('click', async () => {
       try {
-        await fetch('/api/admin/logout', { method: 'POST' });
-        localStorage.removeItem('axel_admin_token');
-        showToast('Logged out successfully', 'success');
-        setTimeout(() => { window.location.href = '/admin/login'; }, 400);
-      } catch (_) {
-        window.location.href = '/admin/login';
-      }
+        await authFetch('/api/admin/logout', { method: 'POST' });
+      } catch (_) {}
+      localStorage.removeItem('axel_admin_token');
+      document.cookie = 'axel_admin_session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
+      showToast('Logged out successfully', 'success');
+      setTimeout(() => { window.location.href = '/admin/login'; }, 300);
     });
 
     // Load CMS Data
     async function loadCmsData() {
       try {
-        const res = await fetch('/api/cms-data');
-        cmsData = await res.json();
+        const res = await authFetch('/api/cms-data');
+        if (res.ok) {
+          cmsData = await res.json();
+          try { localStorage.setItem('risevana_cms_data', JSON.stringify(cmsData)); } catch (_) {}
+        } else {
+          const cached = localStorage.getItem('risevana_cms_data');
+          if (cached) cmsData = JSON.parse(cached);
+        }
         populateFormFields();
       } catch (err) {
-        showToast('Error loading website content', 'error');
+        const cached = localStorage.getItem('risevana_cms_data');
+        if (cached) {
+          try { cmsData = JSON.parse(cached); populateFormFields(); } catch (_) {}
+        }
+        showToast('Loaded offline content cache', 'info');
       }
     }
 
@@ -2073,17 +2130,21 @@
         cmsData.contact.hours = getVal('contact-hours');
 
         // Send POST to server
-        const res = await fetch('/api/cms-data', {
+        const res = await authFetch('/api/cms-data', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(cmsData)
         });
 
         if (res.ok) {
+          try {
+            localStorage.setItem('risevana_cms_data', JSON.stringify(cmsData));
+          } catch (_) {}
           showToast('All website changes saved and live!', 'success');
           populateFormFields();
         } else {
-          showToast('Failed to save changes.', 'error');
+          const errData = await res.json().catch(() => ({}));
+          showToast('Failed to save changes: ' + (errData.error || res.statusText), 'error');
         }
       } catch (err) {
         showToast('Error saving data: ' + err.message, 'error');
@@ -2132,7 +2193,7 @@
         showToast('Uploading asset...', 'success');
 
         try {
-          const res = await fetch('/api/assets/upload', {
+          const res = await authFetch('/api/assets/upload', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -2209,7 +2270,7 @@
         btn.textContent = 'Replacing on server...';
 
         try {
-          const res = await fetch('/api/assets/replace', {
+          const res = await authFetch('/api/assets/replace', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -2247,7 +2308,7 @@
           pageSize: 40
         });
 
-        const res = await fetch(`/api/assets/list?${params}`);
+        const res = await authFetch(`/api/assets/list?${params}`);
         const data = await res.json();
 
         renderMediaGrid(data.items || []);
@@ -2351,7 +2412,7 @@
         page: 1,
         pageSize: 60
       });
-      const res = await fetch(`/api/assets/list?${params}`);
+      const res = await authFetch(`/api/assets/list?${params}`);
       const data = await res.json();
       const grid = document.getElementById('modal-media-grid');
       grid.innerHTML = '';
@@ -2433,7 +2494,7 @@
         }
 
         try {
-          const res = await fetch('/api/admin/change-password', {
+          const res = await authFetch('/api/admin/change-password', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ oldPassword, newPassword })
@@ -2468,7 +2529,7 @@
         return;
       }
       try {
-        const res = await fetch('/api/cms/reset', { method: 'POST' });
+        const res = await authFetch('/api/cms/reset', { method: 'POST' });
         if (res.ok) {
           showToast('Factory defaults restored!', 'success');
           await loadCmsData();

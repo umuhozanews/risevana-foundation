@@ -320,14 +320,30 @@
     });
 
     // Check if already authenticated
-    fetch('/api/admin/check-auth')
-      .then(res => res.json())
-      .then(data => {
-        if (data && data.authenticated) {
-          window.location.href = '/admin';
+    const existingToken = localStorage.getItem('axel_admin_token');
+    if (existingToken) {
+      try {
+        const parts = existingToken.split('.');
+        if (parts.length === 2) {
+          const payload = JSON.parse(atob(parts[0].replace(/-/g, '+').replace(/_/g, '/')));
+          if (payload.exp && payload.exp > Date.now()) {
+            window.location.href = '/admin';
+          }
         }
+      } catch (_) {}
+
+      fetch('/api/admin/check-auth', {
+        headers: { 'Authorization': 'Bearer ' + existingToken },
+        credentials: 'include'
       })
-      .catch(() => {});
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.authenticated) {
+            window.location.href = '/admin';
+          }
+        })
+        .catch(() => {});
+    }
 
     // Handle Form Submit
     const form = document.getElementById('login-form');
@@ -348,7 +364,8 @@
         const response = await fetch('/api/admin/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
+          body: JSON.stringify({ email, password }),
+          credentials: 'include'
         });
 
         const result = await response.json();
@@ -356,12 +373,13 @@
         if (response.ok && result.success) {
           if (result.token) {
             localStorage.setItem('axel_admin_token', result.token);
+            document.cookie = `axel_admin_session=${encodeURIComponent(result.token)}; Path=/; Max-Age=604800; SameSite=Lax`;
           }
           submitBtn.innerHTML = '<span>Success! Redirecting...</span>';
           submitBtn.style.background = '#03ecc5';
           setTimeout(() => {
             window.location.href = '/admin';
-          }, 400);
+          }, 250);
         } else {
           errorBox.style.display = 'flex';
           errorMsg.textContent = result.error || 'Invalid credentials. Please verify email and password.';

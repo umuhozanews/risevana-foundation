@@ -6,14 +6,13 @@ const IS_VERCEL = !!process.env.VERCEL;
 const BASE_DIR = __dirname;
 const DATA_DIR = IS_VERCEL ? path.join('/tmp', 'data') : path.join(BASE_DIR, 'data');
 const CONFIG_PATH = path.join(DATA_DIR, 'admin_config.json');
-const SESSIONS_PATH = path.join(DATA_DIR, 'sessions.json');
 
-// Default initial credentials as requested by user
+// Default initial credentials as explicitly requested by user
 const DEFAULT_EMAIL = 'nextech@gmail.com';
 const DEFAULT_PASSWORD = 'axel@12345';
 
-// In-memory sessions store (vital for serverless & fast lookup)
-const memorySessions = new Map();
+// Stable cryptographic secret for signing stateless session tokens
+const JWT_SECRET = 'axel_school_risevana_secret_auth_2026_9930';
 
 function safeMkdir(dir) {
   try {
@@ -32,7 +31,7 @@ function hashPassword(password, salt) {
 function initAdminConfig() {
   safeMkdir(DATA_DIR);
 
-  // Check bundled config first
+  // 1. Check bundled config
   const bundledConfigPath = path.join(BASE_DIR, 'data', 'admin_config.json');
   if (fs.existsSync(bundledConfigPath)) {
     try {
@@ -40,6 +39,7 @@ function initAdminConfig() {
     } catch (_) {}
   }
 
+  // 2. Check runtime config
   if (fs.existsSync(CONFIG_PATH)) {
     try {
       return JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
@@ -59,27 +59,6 @@ function initAdminConfig() {
   } catch (_) {}
 
   return config;
-}
-
-function getSessions() {
-  const sessions = Object.fromEntries(memorySessions.entries());
-  if (fs.existsSync(SESSIONS_PATH)) {
-    try {
-      const fromDisk = JSON.parse(fs.readFileSync(SESSIONS_PATH, 'utf8'));
-      Object.assign(sessions, fromDisk);
-    } catch (_) {}
-  }
-  return sessions;
-}
-
-function saveSessions(sessions) {
-  safeMkdir(DATA_DIR);
-  for (const [k, v] of Object.entries(sessions)) {
-    memorySessions.set(k, v);
-  }
-  try {
-    fs.writeFileSync(SESSIONS_PATH, JSON.stringify(sessions, null, 2), 'utf8');
-  } catch (_) {}
 }
 
 function verifyCredentials(email, password) {
@@ -103,55 +82,58 @@ function verifyCredentials(email, password) {
   }
 }
 
+/**
+ * Creates an HMAC-signed stateless session token.
+ * 100% resilient across serverless instances and cold starts!
+ */
 function createSession(email) {
-  const sessions = getSessions();
-  const token = crypto.randomBytes(32).toString('hex');
   const now = Date.now();
-  const expiresAt = now + (7 * 24 * 60 * 60 * 1000);
+  const expiresAt = now + (7 * 24 * 60 * 60 * 1000); // 7 days
 
-  for (const t of Object.keys(sessions)) {
-    if (sessions[t].expiresAt < now) {
-      delete sessions[t];
-      memorySessions.delete(t);
-    }
-  }
+  const payload = {
+    email: email.trim().toLowerCase(),
+    iat: now,
+    exp: expiresAt
+  };
 
-  const sessionData = { email, createdAt: now, expiresAt };
-  sessions[token] = sessionData;
-  memorySessions.set(token, sessionData);
+  const payloadStr = Buffer.from(JSON.stringify(payload)).toString('base64url');
+  const signature = crypto.createHmac('sha256', JWT_SECRET).update(payloadStr).digest('base64url');
+  const token = `${payloadStr}.${signature}`;
 
-  saveSessions(sessions);
   return { token, expiresAt };
 }
 
+/**
+ * Validates the HMAC-signed stateless token.
+ */
 function validateSession(token) {
-  if (!token) return false;
-  if (memorySessions.has(token)) {
-    const sess = memorySessions.get(token);
-    if (sess.expiresAt > Date.now()) return sess;
-    memorySessions.delete(token);
-  }
-  const sessions = getSessions();
-  const session = sessions[token];
-  if (!session) return false;
-  if (session.expiresAt < Date.now()) {
-    delete sessions[token];
-    memorySessions.delete(token);
-    saveSessions(sessions);
+  if (!token || typeof token !== 'string' || !token.includes('.')) {
     return false;
   }
-  memorySessions.set(token, session);
-  return session;
+
+  const parts = token.split('.');
+  if (parts.length !== 2) return false;
+
+  const [payloadStr, sig] = parts;
+  const expectedSig = crypto.createHmac('sha256', JWT_SECRET).update(payloadStr).digest('base64url');
+
+  if (sig !== expectedSig) {
+    return false;
+  }
+
+  try {
+    const payload = JSON.parse(Buffer.from(payloadStr, 'base64url').toString('utf8'));
+    if (payload.exp < Date.now()) {
+      return false; // Expired
+    }
+    return payload;
+  } catch (_) {
+    return false;
+  }
 }
 
 function destroySession(token) {
-  if (!token) return;
-  memorySessions.delete(token);
-  const sessions = getSessions();
-  if (sessions[token]) {
-    delete sessions[token];
-    saveSessions(sessions);
-  }
+  // Stateless token invalidated on client by clearing cookie and localStorage
 }
 
 function updatePassword(oldPassword, newPassword) {
@@ -178,17 +160,21 @@ function updatePassword(oldPassword, newPassword) {
 }
 
 function extractToken(req) {
+  // 1. Authorization header (Bearer token)
   const authHeader = req.headers['authorization'];
   if (authHeader && authHeader.startsWith('Bearer ')) {
-    return authHeader.substring(7).trim();
+    const tok = authHeader.substring(7).trim();
+    if (tok && tok !== 'null' && tok !== 'undefined') return tok;
   }
 
+  // 2. Cookie header (axel_admin_session)
   const cookieHeader = req.headers['cookie'];
   if (cookieHeader) {
     const cookies = cookieHeader.split(';').map(c => c.trim());
     for (const c of cookies) {
       if (c.startsWith('axel_admin_session=')) {
-        return c.substring('axel_admin_session='.length).trim();
+        const val = c.substring('axel_admin_session='.length).trim();
+        if (val && val !== 'null' && val !== 'undefined') return val;
       }
     }
   }
